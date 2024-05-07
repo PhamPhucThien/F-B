@@ -1,0 +1,18 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/FooDrink/.vs
+/FooDrink/FooDrink.API/bin/Debug/net6.0
+/FooDrink/FooDrink.API/obj
+/FooDrink/FooDrink.BussinessService/bin/Debug/net6.0
+/FooDrink/FooDrink.BussinessService/obj
+/FooDrink/FooDrink.Database/bin/Debug/net6.0
+/FooDrink/FooDrink.Database/obj
+/FooDrink/FooDrink.DTO/bin/Debug/net6.0
+/FooDrink/FooDrink.DTO/obj
+/FooDrink/FooDrink.Infrastructure/bin/Debug/net6.0
+/FooDrink/FooDrink.Infrastructure/obj
+/FooDrink/FooDrink.Presentation/obj
+/FooDrink/FooDrink.Repository/bin/Debug/net6.0
+/FooDrink/FooDrink.Repository/obj
