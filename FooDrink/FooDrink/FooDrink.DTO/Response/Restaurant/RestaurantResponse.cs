@@ -1,6 +1,6 @@
-﻿namespace FooDrink.DTO.Request.Restaurant
+﻿namespace FooDrink.DTO.Response.Restaurant
 {
-    public class RestaurantUpdateRequest
+    public class RestaurantResponse
     {
         public Guid Id { get; set; }
         public string RestaurantName { get; set; } = string.Empty;
@@ -10,6 +10,12 @@
         public string City { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
         public string Hotline { get; set; } = string.Empty;
+        public float AverageRating { get; set; }
+        public string ImageList { get; set; } = string.Empty;
+        public string TotalRevenue { get; set; } = string.Empty;
+        public string DailyRevenue { get; set; } = string.Empty;
+        public string MonthlyRevenue { get; set; } = string.Empty;
         public bool IsRegistration { get; set; }
+        public bool Status { get; set; }
     }
 }

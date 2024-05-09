@@ -1,9 +1,7 @@
-﻿using FooDrink.BusinessService.Interface;
-using FooDrink.BussinessService.Interface;
+﻿using FooDrink.BussinessService.Interface;
 using FooDrink.BussinessService.Service;
 using FooDrink.Database;
 using FooDrink.Infrastructure.Authentication;
-using FooDrink.Repository;
 using FooDrink.Repository.Implementation;
 using FooDrink.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -33,13 +31,14 @@ namespace FooDrink.Infrastructure
 
             string connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            services.AddDbContext<FooDrinkDbContext>(opts =>
-                opts.UseSqlServer(connectionString), ServiceLifetime.Transient); 
-            
+            _ = services.AddDbContext<FooDrinkDbContext>(opts =>
+                opts.UseSqlServer(connectionString), ServiceLifetime.Transient);
+
             IServiceProvider serviceProvider = services.BuildServiceProvider();
-            using var scope = serviceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<FooDrinkDbContext>();
-/*            dbContext.Database.Migrate();
-*/        }
+            using IServiceScope scope = serviceProvider.CreateScope();
+            FooDrinkDbContext dbContext = scope.ServiceProvider.GetRequiredService<FooDrinkDbContext>();
+            /*            dbContext.Database.Migrate();
+            */
+        }
     }
 }

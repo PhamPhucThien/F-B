@@ -1,15 +1,10 @@
-﻿using FooDrink.Database.Models;
-using FooDrink.Database;
-using FooDrink.DTO.Request.Restaurant;
+﻿using FooDrink.Database;
+using FooDrink.Database.Models;
 using FooDrink.DTO.Request;
+using FooDrink.DTO.Request.Restaurant;
 using FooDrink.DTO.Response.Restaurant;
 using FooDrink.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FooDrink.Repository.Implementation
 {
@@ -24,57 +19,81 @@ namespace FooDrink.Repository.Implementation
 
         public async Task<IEnumerable<RestaurantGetListResponse>> GetRestaurantsAsync(RestaurantGetListRequest request)
         {
-            IQueryable<Restaurant> query = _context.Restaurants;
-
-            if (!string.IsNullOrEmpty(request.SearchString))
+            try
             {
-                query = query.Where(r =>
-                    r.RestaurantName.ToLower().Contains(request.SearchString.ToLower()) ||
-                    r.City.ToLower().Contains(request.SearchString.ToLower()) ||
-                    r.Country.ToLower().Contains(request.SearchString.ToLower()));
+                IQueryable<Restaurant> query = _context.Restaurants.AsQueryable();
+
+                if (!string.IsNullOrEmpty(request.SearchString))
+                {
+                    query = query.Where(r =>
+                        r.RestaurantName.Contains(request.SearchString) ||
+                        r.City.Contains(request.SearchString) ||
+                        r.Country.Contains(request.SearchString));
+                }
+
+                query = query.OrderBy(r => r.RestaurantName)
+                             .Skip((request.PageIndex - 1) * request.PageSize)
+                             .Take(request.PageSize);
+
+                List<RestaurantGetListResponse> responseList = await query.Select(r => new RestaurantGetListResponse
+                {
+                    PageSize = request.PageSize,
+                    PageIndex = request.PageIndex,
+                    SearchString = request.SearchString,
+                    Data = new List<RestaurantResponse>
+                    {
+                        new RestaurantResponse
+                        {
+                            Id = r.Id,
+                            RestaurantName = r.RestaurantName,
+                            Latitude = r.Latitude,
+                            Longitude = r.Longitude,
+                            Address = r.Address,
+                            City = r.City,
+                            Country = r.Country,
+                            Hotline = r.Hotline,
+                            AverageRating = r.AverageRating,
+                            ImageList = r.ImageList,
+                            TotalRevenue = r.TotalRevenue,
+                            DailyRevenue = r.DailyRevenue,
+                            MonthlyRevenue = r.MonthlyRevenue
+                        }
+                    }
+                }).ToListAsync();
+
+                return responseList;
             }
-
-            var pagedRestaurants = await query
-                .Skip(request.PageSize * (request.PageIndex - 1))
-                .Take(request.PageSize)
-                .ToListAsync();
-
-            var responseList = pagedRestaurants.Select(r => new RestaurantGetListResponse
+            catch (Exception ex)
             {
-                RestaurantName = r.RestaurantName,
-                Latitude = r.Latitude,
-                Longitude = r.Longitude,
-                Address = r.Address,
-                City = r.City,
-                Country = r.Country,
-                Hotline = r.Hotline,
-                AverageRating = r.AverageRating
-            }).ToList();
-
-            return responseList;
+                throw new Exception("An error occurred while fetching restaurants.", ex);
+            }
         }
+
 
         public async Task<Restaurant> AddAsync(Restaurant entity)
         {
-            _context.Restaurants.Add(entity);
-            await _context.SaveChangesAsync();
+            _ = _context.Restaurants.Add(entity);
+            _ = await _context.SaveChangesAsync();
             return entity;
         }
 
         public async Task<bool> DeleteByIdAsync(Guid id)
         {
-            var entity = await _context.Restaurants.FindAsync(id);
+            Restaurant? entity = await _context.Restaurants.FindAsync(id);
             if (entity == null)
+            {
                 return false;
-            entity.Status = true; // Đánh dấu là đã xóa
-            await _context.SaveChangesAsync();
+            }
+
+            entity.Status = true;
+            _ = await _context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> EditAsync(Restaurant entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            _ = await _context.SaveChangesAsync();
             return true;
         }
 
@@ -90,13 +109,13 @@ namespace FooDrink.Repository.Implementation
 
         public IEnumerable<Restaurant> GetWithPaging(IPagingRequest pagingRequest)
         {
-            if (pagingRequest == null)
-                throw new ArgumentNullException(nameof(pagingRequest));
-
-            return _context.Restaurants
+            return pagingRequest == null
+                ? throw new ArgumentNullException(nameof(pagingRequest))
+                : (IEnumerable<Restaurant>)_context.Restaurants
                 .Skip(pagingRequest.PageSize * (pagingRequest.PageIndex - 1))
                 .Take(pagingRequest.PageSize)
                 .ToList();
         }
+
     }
 }

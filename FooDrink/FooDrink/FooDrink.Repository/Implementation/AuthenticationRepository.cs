@@ -1,15 +1,9 @@
 ﻿using FooDrink.Database;
 using FooDrink.Database.Models;
-using FooDrink.DTO.Request;
 using FooDrink.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FooDrink.Repository
+namespace FooDrink.Repository.Implementation
 {
     public class AuthenticationRepository : RepositoryGeneric<User>, IAuthenticationRepository
     {
@@ -23,15 +17,15 @@ namespace FooDrink.Repository
 
         public async Task<User?> GetByUsernameAndPassword(string username, string password)
         {
-            using var context = new FooDrinkDbContext(_contextOptions);
-            var entity = await context.Set<User>().FirstOrDefaultAsync(a => a.Username == username && a.Password == password && a.Status == true);
+            using FooDrinkDbContext context = new(_contextOptions);
+            User? entity = await context.Set<User>().FirstOrDefaultAsync(a => a.Username == username && a.Password == password && a.Status == true);
             return entity;
         }
 
         public async Task<User?> GetByUsername(string username)
         {
-            using var context = new FooDrinkDbContext(_contextOptions);
-            var entity = await context.Set<User>().FirstOrDefaultAsync(a => a.Username == username);
+            using FooDrinkDbContext context = new(_contextOptions);
+            User? entity = await context.Set<User>().FirstOrDefaultAsync(a => a.Username == username);
             return entity;
         }
     }
