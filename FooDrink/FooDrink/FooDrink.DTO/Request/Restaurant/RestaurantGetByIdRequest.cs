@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace FooDrink.DTO.Request.Restaurant
 {
-    internal class Class1
+    public class RestaurantGetByIdRequest
     {
+        public Guid Id { get; set; }
     }
 }
