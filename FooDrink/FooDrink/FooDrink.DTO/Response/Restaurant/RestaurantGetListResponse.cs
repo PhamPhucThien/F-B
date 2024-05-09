@@ -2,14 +2,24 @@
 {
     public class RestaurantGetListResponse
     {
-        public Guid Id { get; set; }
-        public string RestaurantName { get; set; } = string.Empty;
-        public string Latitude { get; set; } = string.Empty;
-        public string Longitude { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
-        public string City { get; set; } = string.Empty;
-        public string Country { get; set; } = string.Empty;
-        public string Hotline { get; set; } = string.Empty;
-        public float AverageRating { get; set; }
+        /// <summary>
+        /// Page Size
+        /// </summary>
+        public int PageSize { get; set; } = 10;
+
+        /// <summary>
+        /// Page Index
+        /// </summary>
+        public int PageIndex { get; set; } = 1;
+
+        /// <summary>
+        /// Search string
+        /// </summary>
+        public string SearchString { get; set; } = string.Empty;
+
+        /// <summary>
+        /// List of restaurants
+        /// </summary>
+        public List<RestaurantResponse> Data { get; set; } = new List<RestaurantResponse>();
     }
 }

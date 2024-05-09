@@ -14,9 +14,10 @@
         public string TotalRevenue { get; set; } = string.Empty;
         public string DailyRevenue { get; set; } = string.Empty;
         public string MonthlyRevenue { get; set; } = string.Empty;
+        public bool IsRegistration { get; set; }
         public ICollection<User>? Users { get; set; }
         public Menu? Menu { get; set; }
         public ICollection<Review>? Reviews { get; set; }
-        public ICollection<Order>? Orders { get; set;}
+        public ICollection<Order>? Orders { get; set; }
     }
 }

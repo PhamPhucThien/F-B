@@ -1,12 +1,9 @@
-﻿using FooDrink.BusinessService.Interface;
+﻿using FooDrink.BussinessService.Interface;
 using FooDrink.DTO.Request.Restaurant;
 using FooDrink.DTO.Response.Restaurant;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace FooDrink.Controllers
+namespace FooDrink.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -20,31 +17,28 @@ namespace FooDrink.Controllers
         }
 
         [HttpGet("GetListRestaurant")]
-        public async Task<ActionResult<IEnumerable<RestaurantGetListResponse>>> GetRestaurantsAsync([FromQuery] RestaurantGetListRequest request)
+        public async Task<IActionResult> GetRestaurants([FromQuery] RestaurantGetListRequest request)
         {
             try
             {
-                var restaurants = await _restaurantService.GetRestaurantsAsync(request);
-                return Ok(restaurants);
+                RestaurantGetListResponse response = await _restaurantService.GetRestaurantsAsync(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"An error occurred while fetching restaurants: {ex.Message}");
             }
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<RestaurantGetByIdResponse>> GetRestaurantByIdAsync(Guid id)
         {
             try
             {
-                var request = new RestaurantGetByIdRequest { Id = id };
-                var restaurant = await _restaurantService.GetRestaurantByIdAsync(request);
-                if (restaurant == null)
-                {
-                    return NotFound();
-                }
-                return Ok(restaurant);
+                RestaurantGetByIdRequest request = new() { Id = id };
+                RestaurantGetByIdResponse restaurant = await _restaurantService.GetRestaurantByIdAsync(request);
+                return restaurant == null ? (ActionResult<RestaurantGetByIdResponse>)NotFound() : (ActionResult<RestaurantGetByIdResponse>)Ok(restaurant);
             }
             catch (Exception ex)
             {
@@ -57,7 +51,7 @@ namespace FooDrink.Controllers
         {
             try
             {
-                var addedRestaurant = await _restaurantService.AddRestaurantAsync(request);
+                RestaurantAddResponse addedRestaurant = await _restaurantService.AddRestaurantAsync(request);
                 return addedRestaurant;
             }
             catch (Exception ex)
@@ -76,12 +70,8 @@ namespace FooDrink.Controllers
                     return BadRequest("Id mismatch between request parameter and request body.");
                 }
 
-                var updatedRestaurant = await _restaurantService.UpdateRestaurantAsync(request);
-                if (updatedRestaurant == null)
-                {
-                    return NotFound();
-                }
-                return Ok(updatedRestaurant);
+                RestaurantUpdateResponse updatedRestaurant = await _restaurantService.UpdateRestaurantAsync(request);
+                return updatedRestaurant == null ? (ActionResult<RestaurantUpdateResponse>)NotFound() : (ActionResult<RestaurantUpdateResponse>)Ok(updatedRestaurant);
             }
             catch (Exception ex)
             {
@@ -94,12 +84,8 @@ namespace FooDrink.Controllers
         {
             try
             {
-                var result = await _restaurantService.DeleteRestaurantByIdAsync(id);
-                if (!result)
-                {
-                    return NotFound();
-                }
-                return NoContent();
+                bool result = await _restaurantService.DeleteRestaurantByIdAsync(id);
+                return !result ? NotFound() : NoContent();
             }
             catch (Exception ex)
             {
