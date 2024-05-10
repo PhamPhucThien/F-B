@@ -41,34 +41,59 @@ namespace FooDrink.BussinessService.Service
             }
         }
 
+        public async Task<RestaurantGetByLocationResponse> GetRestaurantsByLocationAsync(RestaurantGetByLocationRequest request)
+        {
+            try
+            {
+                var response = await _restaurantRepository.GetRestaurantsByLocationAsync(request);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching restaurants by location.", ex);
+            }
+        }
+
         public async Task<RestaurantGetByIdResponse?> GetRestaurantByIdAsync(RestaurantGetByIdRequest request)
         {
-            Restaurant restaurant = await _restaurantRepository.GetByIdAsync(request.Id);
-            return restaurant == null
-                ? null
-                : new RestaurantGetByIdResponse
+            try
+            {
+                var restaurant = await _restaurantRepository.GetByIdAsync(request.Id);
+
+                if (restaurant == null)
+                {
+                    return null;
+                }
+
+                return new RestaurantGetByIdResponse
                 {
                     Data = new List<RestaurantResponse>
-                    {
-                        new RestaurantResponse
-                        {
-                            Id = restaurant.Id,
-                            RestaurantName = restaurant.RestaurantName,
-                            Latitude = restaurant.Latitude,
-                            Longitude = restaurant.Longitude,
-                            Address = restaurant.Address,
-                            City = restaurant.City,
-                            Country = restaurant.Country,
-                            Hotline = restaurant.Hotline,
-                            AverageRating = restaurant.AverageRating
-                        }
-                    }
+            {
+                new RestaurantResponse
+                {
+                    Id = restaurant.Id,
+                    RestaurantName = restaurant.RestaurantName,
+                    Latitude = restaurant.Latitude,
+                    Longitude = restaurant.Longitude,
+                    Address = restaurant.Address,
+                    City = restaurant.City,
+                    Country = restaurant.Country,
+                    Hotline = restaurant.Hotline,
+                    AverageRating = restaurant.AverageRating,
+                    IsRegistration = restaurant.IsRegistration,
+                }
+            }
                 };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching the restaurant by id.", ex);
+            }
         }
 
         public async Task<bool> DeleteRestaurantByIdAsync(Guid id)
         {
-            Restaurant restaurant = await _restaurantRepository.GetByIdAsync(id);
+            var restaurant = await _restaurantRepository.GetByIdAsync(id);
             if (restaurant == null)
             {
                 return false;
@@ -149,12 +174,12 @@ namespace FooDrink.BussinessService.Service
             }
         }
 
-        public async Task<RestaurantUpdateResponse?> UpdateRestaurantAsync(RestaurantUpdateRequest request)
+        public async Task<RestaurantUpdateResponse> UpdateRestaurantAsync(RestaurantUpdateRequest request)
         {
-            Restaurant existingRestaurant = await _restaurantRepository.GetByIdAsync(request.Id);
+            var existingRestaurant = await _restaurantRepository.GetByIdAsync(request.Id);
             if (existingRestaurant == null)
             {
-                return null;
+                throw new InvalidOperationException("Failed to update restaurant: restaurant not found.");
             }
 
             existingRestaurant.RestaurantName = request.RestaurantName;
@@ -167,26 +192,42 @@ namespace FooDrink.BussinessService.Service
             existingRestaurant.IsRegistration = request.IsRegistration;
 
             bool isEdited = await _restaurantRepository.EditAsync(existingRestaurant);
-            return !isEdited
-                ? null
-                : new RestaurantUpdateResponse
-                {
-                    Data = new List<RestaurantResponse>
-                    {
-                        new RestaurantResponse
-                        {
-                            Id = existingRestaurant.Id,
-                            RestaurantName = existingRestaurant.RestaurantName,
-                            Latitude = existingRestaurant.Latitude,
-                            Longitude = existingRestaurant.Longitude,
-                            Address = existingRestaurant.Address,
-                            City = existingRestaurant.City,
-                            Country = existingRestaurant.Country,
-                            Hotline = existingRestaurant.Hotline,
-                            IsRegistration = existingRestaurant.IsRegistration
-                        }
-                    }
-                };
+            if (!isEdited)
+            {
+                throw new InvalidOperationException("Failed to update restaurant.");
+            }
+
+            return new RestaurantUpdateResponse
+            {
+                Data = new List<RestaurantResponse>
+        {
+            new RestaurantResponse
+            {
+                Id = existingRestaurant.Id,
+                RestaurantName = existingRestaurant.RestaurantName,
+                Latitude = existingRestaurant.Latitude,
+                Longitude = existingRestaurant.Longitude,
+                Address = existingRestaurant.Address,
+                City = existingRestaurant.City,
+                Country = existingRestaurant.Country,
+                Hotline = existingRestaurant.Hotline,
+                IsRegistration = existingRestaurant.IsRegistration
+            }
+        }
+            };
+        }
+
+        public async Task<ApproveRestaurantPartnerResponse> ApproveRestaurantPartnerAsync(ApproveRestaurantPartnerRequest request)
+        {
+            try
+            {
+                ApproveRestaurantPartnerResponse response = await _restaurantRepository.ApproveRestaurantPartnerAsync(request);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while approving restaurant partner.", ex);
+            }
         }
     }
 }

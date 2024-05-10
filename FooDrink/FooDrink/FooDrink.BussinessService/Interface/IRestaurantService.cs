@@ -10,5 +10,7 @@ namespace FooDrink.BussinessService.Interface
         Task<bool> DeleteRestaurantByIdAsync(Guid id);
         Task<RestaurantAddResponse> AddRestaurantAsync(RestaurantAddRequest request);
         Task<RestaurantUpdateResponse> UpdateRestaurantAsync(RestaurantUpdateRequest request);
+        Task<ApproveRestaurantPartnerResponse> ApproveRestaurantPartnerAsync(ApproveRestaurantPartnerRequest request);
+        Task<RestaurantGetByLocationResponse> GetRestaurantsByLocationAsync(RestaurantGetByLocationRequest request);
     }
 }

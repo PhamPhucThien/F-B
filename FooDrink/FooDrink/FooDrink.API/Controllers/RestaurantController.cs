@@ -30,6 +30,20 @@ namespace FooDrink.API.Controllers
             }
         }
 
+        [HttpGet("search-by-location")]
+        public async Task<ActionResult<RestaurantGetByLocationResponse>> SearchByLocationAsync([FromQuery] RestaurantGetByLocationRequest request)
+        {
+            try
+            {
+                var response = await _restaurantService.GetRestaurantsByLocationAsync(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<RestaurantGetByIdResponse>> GetRestaurantByIdAsync(Guid id)
@@ -60,7 +74,7 @@ namespace FooDrink.API.Controllers
             }
         }
 
-        [HttpPut("UpdateRestaurant{id}")]
+        [HttpPut("UpdateRestaurant")]
         public async Task<ActionResult<RestaurantUpdateResponse>> UpdateRestaurantAsync(Guid id, RestaurantUpdateRequest request)
         {
             try
@@ -90,6 +104,20 @@ namespace FooDrink.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPut("approve")]
+        public async Task<IActionResult> ApproveRestaurantPartner(Guid id, [FromBody] ApproveRestaurantPartnerRequest request)
+        {
+            try
+            {
+                request.Id = id;
+                ApproveRestaurantPartnerResponse response = await _restaurantService.ApproveRestaurantPartnerAsync(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
     }
