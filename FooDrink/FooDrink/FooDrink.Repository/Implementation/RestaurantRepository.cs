@@ -17,6 +17,12 @@ namespace FooDrink.Repository.Implementation
             _context = context;
         }
 
+        /// <summary>
+        /// GetRestaurantsAsync
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<IEnumerable<RestaurantGetListResponse>> GetRestaurantsAsync(RestaurantGetListRequest request)
         {
             try
@@ -73,10 +79,22 @@ namespace FooDrink.Repository.Implementation
             }
         }
 
+        /// <summary>
+        /// GetRestaurantsByLocationAsync
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="Exception"></exception>
         public async Task<RestaurantGetByLocationResponse> GetRestaurantsByLocationAsync(RestaurantGetByLocationRequest request)
         {
             try
             {
+                if (_context.Restaurants == null)
+                {
+                    throw new NullReferenceException("Restaurant database context is null");
+                }
+
                 var restaurants = await _context.Restaurants
                     .Where(r => r.Latitude == request.Latitude && r.Longitude == request.Longitude)
                     .ToListAsync();
@@ -110,26 +128,53 @@ namespace FooDrink.Repository.Implementation
             }
         }
 
+        /// <summary>
+        /// AddAsync
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
         public async Task<Restaurant> AddAsync(Restaurant entity)
         {
+            if (_context.Restaurants == null)
+            {
+                throw new NullReferenceException("Restaurant database context is null");
+            }
+
             _ = _context.Restaurants.Add(entity);
             _ = await _context.SaveChangesAsync();
             return entity;
         }
 
+        /// <summary>      
+        /// DeleteByIdAsync
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
         public async Task<bool> DeleteByIdAsync(Guid id)
         {
+            if (_context.Restaurants == null)
+            {
+                throw new NullReferenceException("Restaurant database context is null");
+            }
+
             Restaurant? entity = await _context.Restaurants.FindAsync(id);
             if (entity == null)
             {
                 return false;
             }
 
-            entity.Status = true;
+            entity.Status = false;
             _ = await _context.SaveChangesAsync();
             return true;
         }
 
+        /// <summary>
+        /// EditAsync
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public async Task<bool> EditAsync(Restaurant entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
@@ -137,20 +182,49 @@ namespace FooDrink.Repository.Implementation
             return true;
         }
 
+        /// <summary>
+        /// GetAll
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<IEnumerable<Restaurant>> GetAll()
         {
-            return await _context.Restaurants.ToListAsync();
+            var restaurants = _context.Restaurants;
+            if (restaurants == null)
+            {
+                throw new Exception("Restaurant data not found in the database.");
+            }
+
+            return await restaurants.ToListAsync();
         }
 
+        /// <summary>
+        /// GetByIdAsync
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Restaurant?> GetByIdAsync(Guid id)
         {
             return await _context.Restaurants.FindAsync(id);
         }
 
+        /// <summary>
+        /// ApproveRestaurantPartnerAsync
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception"></exception>
         public async Task<ApproveRestaurantPartnerResponse> ApproveRestaurantPartnerAsync(ApproveRestaurantPartnerRequest request)
         {
             try
             {
+                if (_context.Restaurants == null)
+                {
+                    throw new NullReferenceException("Restaurant database context is null");
+                }
+
                 var restaurant = await _context.Restaurants.FindAsync(request.Id);
 
                 if (restaurant == null)
@@ -197,12 +271,26 @@ namespace FooDrink.Repository.Implementation
             }
         }
 
-
+        /// <summary>
+        /// GetWithPaging
+        /// </summary>
+        /// <param name="pagingRequest"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="NullReferenceException"></exception>
         public IEnumerable<Restaurant> GetWithPaging(IPagingRequest pagingRequest)
         {
-            return pagingRequest == null
-                ? throw new ArgumentNullException(nameof(pagingRequest))
-                : (IEnumerable<Restaurant>)_context.Restaurants
+            if (pagingRequest == null)
+            {
+                throw new ArgumentNullException(nameof(pagingRequest));
+            }
+
+            if (_context.Restaurants == null)
+            {
+                throw new NullReferenceException("Restaurant database context is null");
+            }
+
+            return _context.Restaurants
                 .Skip(pagingRequest.PageSize * (pagingRequest.PageIndex - 1))
                 .Take(pagingRequest.PageSize)
                 .ToList();

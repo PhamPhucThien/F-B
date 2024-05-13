@@ -19,7 +19,9 @@ namespace FooDrink.Infrastructure
             _ = services.AddScoped<IAuthenticationService, AuthenticationService>();
             _ = services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             _ = services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+            _ = services.AddScoped<IUserRepository, UserRepository>();
             _ = services.AddScoped<IRestaurantService, RestaurantService>();
+            _ = services.AddScoped<IUserService, UserService>();
         }
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
