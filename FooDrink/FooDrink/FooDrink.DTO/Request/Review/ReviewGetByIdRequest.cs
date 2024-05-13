@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace FooDrink.DTO.Request.Review
 {
-    internal class Class1
+    public class ReviewGetByIdRequest
     {
+        public Guid Id { get; set; }
     }
 }

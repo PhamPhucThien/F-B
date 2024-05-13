@@ -27,6 +27,10 @@ namespace FooDrink.Repository.Implementation
         {
             try
             {
+                if (_context.Restaurants == null)
+                {
+                    throw new NullReferenceException("Restaurant database context is null");
+                }
                 IQueryable<Restaurant> query = _context.Restaurants.AsQueryable();
 
                 if (!string.IsNullOrEmpty(request.SearchString))
@@ -205,6 +209,10 @@ namespace FooDrink.Repository.Implementation
         /// <returns></returns>
         public async Task<Restaurant?> GetByIdAsync(Guid id)
         {
+            if (_context.Restaurants == null)
+            {
+                throw new NullReferenceException("Restaurant database context is null");
+            }
             return await _context.Restaurants.FindAsync(id);
         }
 
