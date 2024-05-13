@@ -9,12 +9,25 @@ namespace FooDrink.BussinessService.Service
     public class RestaurantService : IRestaurantService
     {
         private readonly IRestaurantRepository _restaurantRepository;
+        private readonly IUserRepository _userRepository;
 
-        public RestaurantService(IRestaurantRepository restaurantRepository)
+        /// <summary>
+        /// Restaurant Service
+        /// </summary>
+        /// <param name="restaurantRepository"></param>
+        /// <param name="userRepository"></param>
+        public RestaurantService(IRestaurantRepository restaurantRepository, IUserRepository userRepository)
         {
             _restaurantRepository = restaurantRepository;
+            _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Get list Restaurant
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<RestaurantGetListResponse> GetRestaurantsAsync(RestaurantGetListRequest request)
         {
             try
@@ -41,6 +54,12 @@ namespace FooDrink.BussinessService.Service
             }
         }
 
+        /// <summary>
+        /// Get Restaurant by location (Lat, Long)
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<RestaurantGetByLocationResponse> GetRestaurantsByLocationAsync(RestaurantGetByLocationRequest request)
         {
             try
@@ -54,7 +73,14 @@ namespace FooDrink.BussinessService.Service
             }
         }
 
-        public async Task<RestaurantGetByIdResponse?> GetRestaurantByIdAsync(RestaurantGetByIdRequest request)
+        /// <summary>
+        /// Get Restaurant by Id
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception"></exception>
+        public async Task<RestaurantGetByIdResponse> GetRestaurantByIdAsync(RestaurantGetByIdRequest request)
         {
             try
             {
@@ -62,7 +88,7 @@ namespace FooDrink.BussinessService.Service
 
                 if (restaurant == null)
                 {
-                    return null;
+                    throw new ArgumentException("Restaurant not found");
                 }
 
                 return new RestaurantGetByIdResponse
@@ -91,6 +117,11 @@ namespace FooDrink.BussinessService.Service
             }
         }
 
+        /// <summary>
+        /// Block Restaurant
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> DeleteRestaurantByIdAsync(Guid id)
         {
             var restaurant = await _restaurantRepository.GetByIdAsync(id);
@@ -103,19 +134,48 @@ namespace FooDrink.BussinessService.Service
             return result;
         }
 
+        /// <summary>
+        /// Add Retaurant contemporaneous create Add account witl Role: Manager
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception"></exception>
         public async Task<RestaurantAddResponse> AddRestaurantAsync(RestaurantAddRequest request)
         {
             if (string.IsNullOrEmpty(request.RestaurantName) || string.IsNullOrEmpty(request.Latitude) ||
                 string.IsNullOrEmpty(request.Longitude) || string.IsNullOrEmpty(request.Address) ||
                 string.IsNullOrEmpty(request.City) || string.IsNullOrEmpty(request.Country) ||
-                string.IsNullOrEmpty(request.Hotline))
+                string.IsNullOrEmpty(request.Hotline) || string.IsNullOrEmpty(request.Username) ||
+                string.IsNullOrEmpty(request.Password) || string.IsNullOrEmpty(request.Email))
             {
                 throw new ArgumentException("Invalid input data. All required fields must be provided.");
             }
 
             try
             {
-                Restaurant restaurant = new()
+                User newUser = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Username = request.Username,
+                    Password = request.Password,
+                    Email = request.Email,
+                    FullName = request.RestaurantName,
+                    Role = "Manager",
+                    Address = request.Address,
+                    PhoneNumber = request.Hotline,
+                    FavoritedList = "",
+                    Image = "",
+                    CreatedBy = request.Username,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedBy = request.Username,
+                    UpdatedAt = DateTime.UtcNow,
+                  
+                };
+
+                User addedUser = await _userRepository.AddAsync(newUser);
+
+                Restaurant restaurant = new Restaurant
                 {
                     Id = Guid.NewGuid(),
                     RestaurantName = request.RestaurantName,
@@ -125,44 +185,46 @@ namespace FooDrink.BussinessService.Service
                     City = request.City,
                     Country = request.Country,
                     Hotline = request.Hotline,
-                    Status = false,
+                    Status = true,
                     IsRegistration = false,
-                    CreatedBy = "",
+                    CreatedBy = request.Username,
                     CreatedAt = DateTime.UtcNow,
-                    UpdatedBy = "",
+                    UpdatedBy = request.Username,
                     UpdatedAt = DateTime.UtcNow,
                     AverageRating = 0.0f,
                     ImageList = "",
                     TotalRevenue = "",
                     DailyRevenue = "",
-                    MonthlyRevenue = ""
+                    MonthlyRevenue = "",
                 };
 
                 Restaurant addedRestaurant = await _restaurantRepository.AddAsync(restaurant);
 
-                RestaurantAddResponse response = new()
+                addedUser.RestaurantId = addedRestaurant.Id;
+                await _userRepository.EditAsync(addedUser);
+
+                RestaurantAddResponse response = new RestaurantAddResponse
                 {
                     Data = new List<RestaurantResponse>
-                    {
-                        new RestaurantResponse
-                        {
-                            Id = addedRestaurant.Id,
-                            RestaurantName = addedRestaurant.RestaurantName,
-                            Latitude = addedRestaurant.Latitude,
-                            Longitude = addedRestaurant.Longitude,
-                            Address = addedRestaurant.Address,
-                            City = addedRestaurant.City,
-                            Country = addedRestaurant.Country,
-                            Hotline = addedRestaurant.Hotline,
-                            AverageRating = addedRestaurant.AverageRating,
-                            ImageList = addedRestaurant.ImageList,
-                            TotalRevenue = addedRestaurant.TotalRevenue,
-                            DailyRevenue = addedRestaurant.DailyRevenue,
-                            MonthlyRevenue = addedRestaurant.MonthlyRevenue,
-                            IsRegistration = addedRestaurant.IsRegistration,
-
-                        }
-                    }
+            {
+                new RestaurantResponse
+                {
+                    Id = addedRestaurant.Id,
+                    RestaurantName = addedRestaurant.RestaurantName,
+                    Latitude = addedRestaurant.Latitude,
+                    Longitude = addedRestaurant.Longitude,
+                    Address = addedRestaurant.Address,
+                    City = addedRestaurant.City,
+                    Country = addedRestaurant.Country,
+                    Hotline = addedRestaurant.Hotline,
+                    AverageRating = addedRestaurant.AverageRating,
+                    ImageList = addedRestaurant.ImageList,
+                    TotalRevenue = addedRestaurant.TotalRevenue,
+                    DailyRevenue = addedRestaurant.DailyRevenue,
+                    MonthlyRevenue = addedRestaurant.MonthlyRevenue,
+                    IsRegistration = addedRestaurant.IsRegistration
+                }
+            }
                 };
 
                 return response;
@@ -174,6 +236,12 @@ namespace FooDrink.BussinessService.Service
             }
         }
 
+        /// <summary>
+        /// Update Restaurant
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task<RestaurantUpdateResponse> UpdateRestaurantAsync(RestaurantUpdateRequest request)
         {
             var existingRestaurant = await _restaurantRepository.GetByIdAsync(request.Id);
@@ -217,6 +285,12 @@ namespace FooDrink.BussinessService.Service
             };
         }
 
+        /// <summary>
+        /// Approve Restaurant partner by Admin
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<ApproveRestaurantPartnerResponse> ApproveRestaurantPartnerAsync(ApproveRestaurantPartnerRequest request)
         {
             try

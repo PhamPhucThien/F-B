@@ -2,9 +2,14 @@
 using FooDrink.DTO.Request.Restaurant;
 using FooDrink.DTO.Response.Restaurant;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace FooDrink.API.Controllers
 {
+    /// <summary>
+    /// Controller for handling restaurant-related operations.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class RestaurantController : ControllerBase
@@ -16,6 +21,9 @@ namespace FooDrink.API.Controllers
             _restaurantService = restaurantService;
         }
 
+        /// <summary>
+        /// Get a list of restaurants based on the provided criteria.
+        /// </summary>
         [HttpGet("GetListRestaurant")]
         public async Task<IActionResult> GetRestaurants([FromQuery] RestaurantGetListRequest request)
         {
@@ -30,7 +38,10 @@ namespace FooDrink.API.Controllers
             }
         }
 
-        [HttpGet("search-by-location")]
+        /// <summary>
+        /// Search restaurants by location coordinates.
+        /// </summary>
+        [HttpGet("SearchByLocation")]
         public async Task<ActionResult<RestaurantGetByLocationResponse>> SearchByLocationAsync([FromQuery] RestaurantGetByLocationRequest request)
         {
             try
@@ -44,7 +55,9 @@ namespace FooDrink.API.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Get restaurant details by ID.
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<RestaurantGetByIdResponse>> GetRestaurantByIdAsync(Guid id)
         {
@@ -60,6 +73,9 @@ namespace FooDrink.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a new restaurant.
+        /// </summary>
         [HttpPost("AddRestaurant")]
         public async Task<ActionResult<RestaurantAddResponse>> AddRestaurantAsync(RestaurantAddRequest request)
         {
@@ -74,6 +90,9 @@ namespace FooDrink.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Update an existing restaurant.
+        /// </summary>
         [HttpPut("UpdateRestaurant")]
         public async Task<ActionResult<RestaurantUpdateResponse>> UpdateRestaurantAsync(Guid id, RestaurantUpdateRequest request)
         {
@@ -93,6 +112,9 @@ namespace FooDrink.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a restaurant by ID.
+        /// </summary>
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteRestaurantByIdAsync(Guid id)
         {
@@ -106,6 +128,10 @@ namespace FooDrink.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Approve or disapprove a restaurant partner.
+        /// </summary>
         [HttpPut("approve")]
         public async Task<IActionResult> ApproveRestaurantPartner(Guid id, [FromBody] ApproveRestaurantPartnerRequest request)
         {

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace FooDrink.DTO.Request.User
 {
-    public class CreateUserRequest
+    public class UserGetByIdRequest
     {
+        public Guid Id { get; set; }
     }
 }

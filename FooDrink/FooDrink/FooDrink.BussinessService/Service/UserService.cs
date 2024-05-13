@@ -1,8 +1,10 @@
 ﻿using FooDrink.BussinessService.Interface;
 using FooDrink.Database.Models;
 using FooDrink.DTO.Request.User;
+using FooDrink.DTO.Response.Restaurant;
 using FooDrink.DTO.Response.User;
 using FooDrink.Repository;
+using FooDrink.Repository.Implementation;
 using FooDrink.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -19,39 +21,196 @@ namespace FooDrink.BussinessService.Service
             _userRepository = userRepository;
         }
 
-        public async Task<User> AddUser(User user)
+        /// <summary>
+        /// Add new User
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<UserAddResponse> AddUserAsync(UserAddRequest request)
         {
-            // Add user to the repository
-            return await _userRepository.AddAsync(user);
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = request.Username,
+                Password = request.Password,
+                Email = request.Email,
+                FullName = request.FullName,
+                PhoneNumber = request.PhoneNumber,
+                Address = request.Address,
+                FavoritedList = " ",
+                Role = "Customer",
+                RestaurantId = Guid.NewGuid(),
+                Image = "",
+                Status = true,
+                CreatedAt = DateTime.Now,
+                CreatedBy = request.Username,
+                UpdatedAt = DateTime.Now,
+                UpdatedBy = request.Username,
+            };
+
+            var addedUser = await _userRepository.AddAsync(user);
+
+            var response = new UserAddResponse
+            {
+                Data = new List<UserResponse>
+        {
+            new UserResponse
+            {
+                Id = addedUser.Id,
+                Username = addedUser.Username,
+                Password = "*********",
+                Email = addedUser.Email,
+                FullName = addedUser.FullName,
+                PhoneNumber = addedUser.PhoneNumber,
+                Address = addedUser.Address,
+                FavoritedList = addedUser.FavoritedList,
+                Status = addedUser.Status
+            }
+        }
+            };
+
+            return response;
         }
 
-        public async Task<bool> DeleteUser(Guid userId)
+        /// <summary>
+        /// Block User
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteUserIdAsync(Guid id)
         {
-            // Delete user from the repository
-            return await _userRepository.DeleteByIdAsync(userId);
+            return await _userRepository.DeleteByIdAsync(id);
         }
 
-        public async Task<bool> UpdateUser(User user)
+        /// <summary>
+        /// Get User by Id
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<UserGetByIdResponse> GetUserByIdAsync(UserGetByIdRequest request)
         {
-            // Update user in the repository
-            return await _userRepository.EditAsync(user);
+            var response = new UserGetByIdResponse();
+
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(request.Id);
+
+                if (user != null)
+                {
+                    var userResponse = new UserResponse
+                    {
+                        Id = user.Id,
+                        Username = user.Username,
+                        Password = "*********",
+                        Email = user.Email,
+                        FullName = user.FullName,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        FavoritedList = user.FavoritedList,
+                        Status = user.Status
+                    };
+
+                    response.Data.Add(userResponse);
+                }
+                else
+                {
+                    response.Data = new List<UserResponse>();
+                }
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "An error occurred while fetching user.";
+                response.ErrorDetails = ex.ToString(); 
+            }
+
+            return response;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsers(UserGetListRequest request)
+        /// <summary>
+        /// Get all User
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<UserGetListResponse> GetUsersAsync(UserGetListRequest request)
         {
-            // Get all users from the repository
-            return await _userRepository.GetAll();
+            var response = new UserGetListResponse();
+
+            try
+            {
+                IEnumerable<UserGetListResponse> userResponses = await _userRepository.GetUsersAsync(request);
+
+                List<UserResponse> users = userResponses
+                    .SelectMany(userResponse => userResponse.Data)
+                    .ToList();
+
+                response.PageSize = request.PageSize;
+                response.PageIndex = request.PageIndex;
+                response.SearchString = request.SearchString;
+                response.Data = users;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching users.", ex);
+            }
+
+            return response;
         }
 
-        public async Task<User> GetByIdAsync(Guid id)
+        /// <summary>
+        /// Update User
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<UserUpdateResponse> UpdateUserAsync(UserUpdateRequest request)
         {
-            // Get user by ID from the repository
-            return await _userRepository.GetByIdAsync(id);
-        }
+            var response = new UserUpdateResponse();
 
-        public Task<UserGetListResponse> GetApplicationUserListAsync(UserGetListRequest request)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                // Retrieve the user from the database based on the provided user ID
+                var user = await _userRepository.GetByIdAsync(request.Id);
+
+                if (user != null)
+                {
+                    // Update the user entity with the data from the request
+                    user.Username = request.Username;
+                    user.Password = request.Password;
+                    user.Email = request.Email;
+                    user.FullName = request.FullName;
+                    user.PhoneNumber = request.PhoneNumber;
+                    user.Address = request.Address;
+                    user.FavoritedList = request.FavoritedList;
+
+                    await _userRepository.EditAsync(user);
+
+                    var updatedUserResponse = new UserResponse
+                    {
+                        Id = user.Id,
+                        Username = user.Username,
+                        Password = "*********", 
+                        Email = user.Email,
+                        FullName = user.FullName,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        FavoritedList = user.FavoritedList,
+                        Status = user.Status
+                    };
+
+                    response.Data.Add(updatedUserResponse);
+                }
+                else
+                {
+                    response.Data = new List<UserResponse>();
+                }
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "An error occurred while updating user.";
+                response.ErrorDetails = ex.ToString();
+            }
+
+            return response;
         }
     }
 }
