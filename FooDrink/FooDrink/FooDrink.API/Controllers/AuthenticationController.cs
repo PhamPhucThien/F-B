@@ -18,16 +18,42 @@ namespace FooDrink.API.Controllers
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
         }
 
+        /// <summary>
+        /// Login to website
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("Login")]
-        public Task<AuthenticationResponse> Login(LoginRequest request)
+        public async Task<IActionResult> Login(LoginRequest request)
         {
-            return _authenticationService.Login(request);
+            try
+            {
+                var response = await _authenticationService.Login(request);
+                return Ok(response);
+            } 
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
-
+        
+        /// <summary>
+        /// Register new account
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("Register")]
-        public Task<AuthenticationResponse> Register(RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterRequest request)
         {
-            return _authenticationService.Register(request);
+            try
+            {
+                var response = await _authenticationService.Register(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
     }
 }
