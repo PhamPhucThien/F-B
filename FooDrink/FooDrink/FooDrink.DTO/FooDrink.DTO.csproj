@@ -10,4 +10,8 @@
     <ProjectReference Include="..\FooDrink.Database\FooDrink.Database.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Response\Order\" />
+  </ItemGroup>
+
 </Project>

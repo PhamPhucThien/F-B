@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FooDrink.Repository.Implementation
+namespace FooDrink.DTO.Response.Menu
 {
-    public class ProductRepository
+    public class MenuUpdateByIdRequest
     {
     }
 }
