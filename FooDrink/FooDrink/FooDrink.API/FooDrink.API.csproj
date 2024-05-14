@@ -19,4 +19,8 @@
     <ProjectReference Include="..\FooDrink.Infrastructure\FooDrink.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Image\" />
+  </ItemGroup>
+
 </Project>

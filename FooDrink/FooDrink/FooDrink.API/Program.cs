@@ -41,6 +41,7 @@ app.Use(async (context, next) =>
 });
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
