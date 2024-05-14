@@ -1,14 +1,8 @@
 ﻿using FooDrink.BussinessService.Interface;
 using FooDrink.Database.Models;
 using FooDrink.DTO.Request.User;
-using FooDrink.DTO.Response.Restaurant;
 using FooDrink.DTO.Response.User;
-using FooDrink.Repository;
-using FooDrink.Repository.Implementation;
 using FooDrink.Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FooDrink.BussinessService.Service
 {
@@ -28,7 +22,7 @@ namespace FooDrink.BussinessService.Service
         /// <returns></returns>
         public async Task<UserAddResponse> AddUserAsync(UserAddRequest request)
         {
-            var user = new User
+            User user = new()
             {
                 Id = Guid.NewGuid(),
                 Username = request.Username,
@@ -48,9 +42,9 @@ namespace FooDrink.BussinessService.Service
                 UpdatedBy = request.Username,
             };
 
-            var addedUser = await _userRepository.AddAsync(user);
+            User addedUser = await _userRepository.AddAsync(user);
 
-            var response = new UserAddResponse
+            UserAddResponse response = new()
             {
                 Data = new List<UserResponse>
         {
@@ -89,15 +83,15 @@ namespace FooDrink.BussinessService.Service
         /// <returns></returns>
         public async Task<UserGetByIdResponse> GetUserByIdAsync(UserGetByIdRequest request)
         {
-            var response = new UserGetByIdResponse();
+            UserGetByIdResponse response = new();
 
             try
             {
-                var user = await _userRepository.GetByIdAsync(request.Id);
+                User? user = await _userRepository.GetByIdAsync(request.Id);
 
                 if (user != null)
                 {
-                    var userResponse = new UserResponse
+                    UserResponse userResponse = new()
                     {
                         Id = user.Id,
                         Username = user.Username,
@@ -120,7 +114,7 @@ namespace FooDrink.BussinessService.Service
             catch (Exception ex)
             {
                 response.ErrorMessage = "An error occurred while fetching user.";
-                response.ErrorDetails = ex.ToString(); 
+                response.ErrorDetails = ex.ToString();
             }
 
             return response;
@@ -134,7 +128,7 @@ namespace FooDrink.BussinessService.Service
         /// <exception cref="Exception"></exception>
         public async Task<UserGetListResponse> GetUsersAsync(UserGetListRequest request)
         {
-            var response = new UserGetListResponse();
+            UserGetListResponse response = new();
 
             try
             {
@@ -164,12 +158,12 @@ namespace FooDrink.BussinessService.Service
         /// <returns></returns>
         public async Task<UserUpdateResponse> UpdateUserAsync(UserUpdateRequest request)
         {
-            var response = new UserUpdateResponse();
+            UserUpdateResponse response = new();
 
             try
             {
                 // Retrieve the user from the database based on the provided user ID
-                var user = await _userRepository.GetByIdAsync(request.Id);
+                User? user = await _userRepository.GetByIdAsync(request.Id);
 
                 if (user != null)
                 {
@@ -182,13 +176,13 @@ namespace FooDrink.BussinessService.Service
                     user.Address = request.Address;
                     user.FavoritedList = request.FavoritedList;
 
-                    await _userRepository.EditAsync(user);
+                    _ = await _userRepository.EditAsync(user);
 
-                    var updatedUserResponse = new UserResponse
+                    UserResponse updatedUserResponse = new()
                     {
                         Id = user.Id,
                         Username = user.Username,
-                        Password = "*********", 
+                        Password = "*********",
                         Email = user.Email,
                         FullName = user.FullName,
                         PhoneNumber = user.PhoneNumber,

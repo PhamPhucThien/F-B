@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using FooDrink.BussinessService.Service;
+﻿using FooDrink.BussinessService.Interface;
 using FooDrink.DTO.Request.User;
+using FooDrink.DTO.Response.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FooDrink.API.Controllers
@@ -10,96 +9,118 @@ namespace FooDrink.API.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        public UserController(UserService userService)
+        public UserController(IUserService userService)
         {
-            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _userService = userService;
         }
 
         /// <summary>
-        /// Get list of users.
+        /// Add new user
         /// </summary>
-        [HttpGet("GetListUser")]
-        public async Task<IActionResult> GetListUserAsync([FromQuery] UserGetListRequest request)
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("add")]
+        public async Task<IActionResult> AddUser([FromBody] UserAddRequest request)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                var userListResponse = await _userService.GetUsersAsync(request);
-                return Ok(userListResponse);
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
 
-        /// <summary>
-        /// Get a user by their ID.
-        /// </summary>
-        [HttpGet("GetUser/{id}")]
-        public async Task<IActionResult> GetUserByIdAsync(Guid id)
-        {
             try
             {
-                var userGetByIdRequest = new UserGetByIdRequest { Id = id };
-                var userGetByIdResponse = await _userService.GetUserByIdAsync(userGetByIdRequest);
-                return Ok(userGetByIdResponse);
+                UserAddResponse response = await _userService.AddUserAsync(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while adding the user.", error = ex.Message });
             }
         }
 
         /// <summary>
-        /// Add a new user.
+        /// Block user by ID
         /// </summary>
-        [HttpPost("AddUser")]
-        public async Task<IActionResult> AddUserAsync([FromBody] UserAddRequest request)
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("delete/{id:guid}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
             try
             {
-                var userAddResponse = await _userService.AddUserAsync(request);
-                return Ok(userAddResponse);
+                bool result = await _userService.DeleteUserIdAsync(id);
+                return result ? Ok(new { message = "User successfully deleted." }) : NotFound(new { message = "User not found." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while deleting the user.", error = ex.Message });
             }
         }
 
         /// <summary>
-        /// Delete a user by their ID.
+        /// Get user by ID
         /// </summary>
-        [HttpDelete("DeleteUser/{id}")]
-        public async Task<IActionResult> DeleteUserAsync(Guid id)
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("get/{id:guid}")]
+        public async Task<IActionResult> GetUserById(Guid id)
         {
             try
             {
-                var isDeleted = await _userService.DeleteUserIdAsync(id);
-                return Ok(isDeleted);
+                UserGetByIdRequest request = new() { Id = id };
+                UserGetByIdResponse response = await _userService.GetUserByIdAsync(request);
+
+                return response.Data.Count > 0 ? Ok(response) : NotFound(new { message = "User not found." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while fetching the user.", error = ex.Message });
             }
         }
 
         /// <summary>
-        /// Update a user.
+        /// Get all users
         /// </summary>
-        [HttpPut("UpdateUser")]
-        public async Task<IActionResult> UpdateUserAsync([FromBody] UserUpdateRequest request)
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetUsers([FromQuery] UserGetListRequest request)
         {
             try
             {
-                var userUpdateResponse = await _userService.UpdateUserAsync(request);
-                return Ok(userUpdateResponse);
+                UserGetListResponse response = await _userService.GetUsersAsync(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while fetching users.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Update user
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                UserUpdateResponse response = await _userService.UpdateUserAsync(request);
+
+                return response.Data.Count > 0 ? Ok(response) : NotFound(new { message = "User not found." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the user.", error = ex.Message });
             }
         }
     }

@@ -2,8 +2,6 @@
 using FooDrink.DTO.Request.Restaurant;
 using FooDrink.DTO.Response.Restaurant;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace FooDrink.API.Controllers
 {
@@ -46,7 +44,7 @@ namespace FooDrink.API.Controllers
         {
             try
             {
-                var response = await _restaurantService.GetRestaurantsByLocationAsync(request);
+                RestaurantGetByLocationResponse response = await _restaurantService.GetRestaurantsByLocationAsync(request);
                 return Ok(response);
             }
             catch (Exception ex)
