@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Image\" />
+    <Folder Include="wwwroot\image\Restaurant\51e18225-6287-420d-ae15-126fc3426c29\" />
   </ItemGroup>
 
 </Project>

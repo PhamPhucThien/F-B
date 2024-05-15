@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FooDrink.Database\FooDrink.Database.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Response\Order\" />
+    <ProjectReference Include="..\FooDrink.Database\FooDrink.Database.csproj" />
   </ItemGroup>
 
 </Project>

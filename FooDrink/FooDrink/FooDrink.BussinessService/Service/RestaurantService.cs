@@ -218,7 +218,7 @@ namespace FooDrink.BussinessService.Service
                     Country = addedRestaurant.Country,
                     Hotline = addedRestaurant.Hotline,
                     AverageRating = addedRestaurant.AverageRating,
-                    ImageList = addedRestaurant.ImageList,
+                    ImageList = new List<string>(),
                     TotalRevenue = addedRestaurant.TotalRevenue,
                     DailyRevenue = addedRestaurant.DailyRevenue,
                     MonthlyRevenue = addedRestaurant.MonthlyRevenue,

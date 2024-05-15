@@ -11,10 +11,12 @@ namespace FooDrink.Repository.Implementation
     public class RestaurantRepository : IRestaurantRepository
     {
         private readonly FooDrinkDbContext _context;
+        private readonly IHandleImageRepository _imageRepository;
 
-        public RestaurantRepository(FooDrinkDbContext context)
+        public RestaurantRepository(FooDrinkDbContext context, IHandleImageRepository imageRepository)
         {
             _context = context;
+            _imageRepository = imageRepository;
         }
 
         /// <summary>
@@ -48,32 +50,35 @@ namespace FooDrink.Repository.Implementation
                              .Skip((request.PageIndex - 1) * request.PageSize)
                              .Take(request.PageSize);
 
-                List<RestaurantGetListResponse> responseList = await query.Select(r => new RestaurantGetListResponse
+                List<RestaurantGetListResponse> responseList = new List<RestaurantGetListResponse>(); 
+                foreach (var restaurant in await query.ToListAsync())
                 {
-                    PageSize = request.PageSize,
-                    PageIndex = request.PageIndex,
-                    SearchString = request.SearchString,
-                    Data = new List<RestaurantResponse>
+                    var imageUrls = await GetRestaurantImageUrlsAsync(restaurant.Id); 
+                    var restaurantResponse = new RestaurantResponse
                     {
-                        new RestaurantResponse
-                        {
-                            Id = r.Id,
-                            RestaurantName = r.RestaurantName,
-                            Latitude = r.Latitude,
-                            Longitude = r.Longitude,
-                            Address = r.Address,
-                            City = r.City,
-                            Country = r.Country,
-                            Hotline = r.Hotline,
-                            AverageRating = r.AverageRating,
-                            ImageList = r.ImageList,
-                            TotalRevenue = r.TotalRevenue,
-                            DailyRevenue = r.DailyRevenue,
-                            MonthlyRevenue = r.MonthlyRevenue
-
-                        }
-                    }
-                }).ToListAsync();
+                        Id = restaurant.Id,
+                        RestaurantName = restaurant.RestaurantName,
+                        Latitude = restaurant.Latitude,
+                        Longitude = restaurant.Longitude,
+                        Address = restaurant.Address,
+                        City = restaurant.City,
+                        Country = restaurant.Country,
+                        Hotline = restaurant.Hotline,
+                        AverageRating = restaurant.AverageRating,
+                        ImageList = imageUrls,
+                        TotalRevenue = restaurant.TotalRevenue,
+                        DailyRevenue = restaurant.DailyRevenue,
+                        MonthlyRevenue = restaurant.MonthlyRevenue
+                    };
+                    var getListResponse = new RestaurantGetListResponse
+                    {
+                        PageSize = request.PageSize,
+                        PageIndex = request.PageIndex,
+                        SearchString = request.SearchString,
+                        Data = new List<RestaurantResponse> { restaurantResponse }
+                    };
+                    responseList.Add(getListResponse); 
+                }
 
                 return responseList;
             }
@@ -82,6 +87,7 @@ namespace FooDrink.Repository.Implementation
                 throw new Exception("An error occurred while fetching restaurants.", ex);
             }
         }
+
 
         /// <summary>
         /// GetRestaurantsByLocationAsync
@@ -106,23 +112,29 @@ namespace FooDrink.Repository.Implementation
                 var response = new RestaurantGetByLocationResponse
                 {
                     Location = $"{request.Latitude},{request.Longitude}",
-                    Data = restaurants.Select(r => new RestaurantResponse
-                    {
-                        Id = r.Id,
-                        RestaurantName = r.RestaurantName,
-                        Latitude = r.Latitude,
-                        Longitude = r.Longitude,
-                        Address = r.Address,
-                        City = r.City,
-                        Country = r.Country,
-                        Hotline = r.Hotline,
-                        AverageRating = r.AverageRating,
-                        ImageList = r.ImageList,
-                        TotalRevenue = r.TotalRevenue,
-                        DailyRevenue = r.DailyRevenue,
-                        MonthlyRevenue = r.MonthlyRevenue
-                    }).ToList()
+                    Data = new List<RestaurantResponse>()
                 };
+
+                foreach (var restaurant in restaurants)
+                {
+                    var imageUrls = await GetRestaurantImageUrlsAsync(restaurant.Id);
+                    response.Data.Add(new RestaurantResponse
+                    {
+                        Id = restaurant.Id,
+                        RestaurantName = restaurant.RestaurantName,
+                        Latitude = restaurant.Latitude,
+                        Longitude = restaurant.Longitude,
+                        Address = restaurant.Address,
+                        City = restaurant.City,
+                        Country = restaurant.Country,
+                        Hotline = restaurant.Hotline,
+                        AverageRating = restaurant.AverageRating,
+                        ImageList = imageUrls,
+                        TotalRevenue = restaurant.TotalRevenue,
+                        DailyRevenue = restaurant.DailyRevenue,
+                        MonthlyRevenue = restaurant.MonthlyRevenue
+                    });
+                }
 
                 return response;
             }
@@ -131,6 +143,7 @@ namespace FooDrink.Repository.Implementation
                 throw new Exception("An error occurred while fetching restaurants by location.", ex);
             }
         }
+
 
         /// <summary>
         /// AddAsync
@@ -259,7 +272,7 @@ namespace FooDrink.Repository.Implementation
                     Country = restaurant.Country,
                     Hotline = restaurant.Hotline,
                     AverageRating = restaurant.AverageRating,
-                    ImageList = restaurant.ImageList,
+                    ImageList = await GetRestaurantImageUrlsAsync(restaurant.Id),
                     TotalRevenue = restaurant.TotalRevenue,
                     DailyRevenue = restaurant.DailyRevenue,
                     MonthlyRevenue = restaurant.MonthlyRevenue,
@@ -302,6 +315,30 @@ namespace FooDrink.Repository.Implementation
                 .Skip(pagingRequest.PageSize * (pagingRequest.PageIndex - 1))
                 .Take(pagingRequest.PageSize)
                 .ToList();
+        }
+
+        /// <summary>
+        /// GetRestaurantImageListAsync
+        /// </summary>
+        /// <param name="restaurantId"></param>
+        /// <returns></returns>
+        private async Task<List<string>> GetRestaurantImageUrlsAsync(Guid restaurantId)
+        {
+            if (_context.Restaurants == null)
+            {
+                throw new NullReferenceException("Restaurant database context is null");
+            }
+            var restaurant = await _context.Restaurants.FindAsync(restaurantId);
+            if (restaurant == null)
+            {
+                throw new ArgumentException("Restaurant not found");
+            }
+            var imageList = restaurant.ImageList.Split(',')
+                .Select(image => $"/image/restaurant/{restaurantId}/{image.Trim()}")
+                .Where(image => !string.IsNullOrWhiteSpace(image))
+                .ToList();
+
+            return imageList;
         }
 
     }

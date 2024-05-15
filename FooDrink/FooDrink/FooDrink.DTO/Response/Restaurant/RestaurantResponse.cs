@@ -11,7 +11,7 @@
         public string Country { get; set; } = string.Empty;
         public string Hotline { get; set; } = string.Empty;
         public float AverageRating { get; set; }
-        public string ImageList { get; set; } = string.Empty;
+        public List<string> ImageList { get; set; } = new List<string>();
         public string TotalRevenue { get; set; } = string.Empty;
         public string DailyRevenue { get; set; } = string.Empty;
         public string MonthlyRevenue { get; set; } = string.Empty;
