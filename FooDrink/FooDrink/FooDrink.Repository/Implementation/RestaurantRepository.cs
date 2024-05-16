@@ -50,11 +50,12 @@ namespace FooDrink.Repository.Implementation
                              .Skip((request.PageIndex - 1) * request.PageSize)
                              .Take(request.PageSize);
 
-                List<RestaurantGetListResponse> responseList = new List<RestaurantGetListResponse>(); 
-                foreach (var restaurant in await query.ToListAsync())
+                List<RestaurantGetListResponse> responseList = new();
+                foreach (Restaurant? restaurant in await query.ToListAsync())
                 {
-                    var imageUrls = await GetRestaurantImageUrlsAsync(restaurant.Id); 
-                    var restaurantResponse = new RestaurantResponse
+                    List<string> imageUrls = await GetRestaurantImageUrlsAsync(restaurant.Id);
+
+                    RestaurantResponse restaurantResponse = new()
                     {
                         Id = restaurant.Id,
                         RestaurantName = restaurant.RestaurantName,
@@ -70,14 +71,14 @@ namespace FooDrink.Repository.Implementation
                         DailyRevenue = restaurant.DailyRevenue,
                         MonthlyRevenue = restaurant.MonthlyRevenue
                     };
-                    var getListResponse = new RestaurantGetListResponse
+                    RestaurantGetListResponse getListResponse = new()
                     {
                         PageSize = request.PageSize,
                         PageIndex = request.PageIndex,
                         SearchString = request.SearchString,
                         Data = new List<RestaurantResponse> { restaurantResponse }
                     };
-                    responseList.Add(getListResponse); 
+                    responseList.Add(getListResponse);
                 }
 
                 return responseList;
@@ -105,19 +106,19 @@ namespace FooDrink.Repository.Implementation
                     throw new NullReferenceException("Restaurant database context is null");
                 }
 
-                var restaurants = await _context.Restaurants
+                List<Restaurant> restaurants = await _context.Restaurants
                     .Where(r => r.Latitude == request.Latitude && r.Longitude == request.Longitude)
                     .ToListAsync();
 
-                var response = new RestaurantGetByLocationResponse
+                RestaurantGetByLocationResponse response = new()
                 {
                     Location = $"{request.Latitude},{request.Longitude}",
                     Data = new List<RestaurantResponse>()
                 };
 
-                foreach (var restaurant in restaurants)
+                foreach (Restaurant? restaurant in restaurants)
                 {
-                    var imageUrls = await GetRestaurantImageUrlsAsync(restaurant.Id);
+                    List<string> imageUrls = await GetRestaurantImageUrlsAsync(restaurant.Id);
                     response.Data.Add(new RestaurantResponse
                     {
                         Id = restaurant.Id,
@@ -206,13 +207,8 @@ namespace FooDrink.Repository.Implementation
         /// <exception cref="Exception"></exception>
         public async Task<IEnumerable<Restaurant>> GetAll()
         {
-            var restaurants = _context.Restaurants;
-            if (restaurants == null)
-            {
-                throw new Exception("Restaurant data not found in the database.");
-            }
-
-            return await restaurants.ToListAsync();
+            DbSet<Restaurant>? restaurants = _context.Restaurants;
+            return restaurants == null ? throw new Exception("Restaurant data not found in the database.") : (IEnumerable<Restaurant>)await restaurants.ToListAsync();
         }
 
         /// <summary>
@@ -222,11 +218,9 @@ namespace FooDrink.Repository.Implementation
         /// <returns></returns>
         public async Task<Restaurant?> GetByIdAsync(Guid id)
         {
-            if (_context.Restaurants == null)
-            {
-                throw new NullReferenceException("Restaurant database context is null");
-            }
-            return await _context.Restaurants.FindAsync(id);
+            return _context.Restaurants == null
+                ? throw new NullReferenceException("Restaurant database context is null")
+                : await _context.Restaurants.FindAsync(id);
         }
 
         /// <summary>
@@ -246,7 +240,7 @@ namespace FooDrink.Repository.Implementation
                     throw new NullReferenceException("Restaurant database context is null");
                 }
 
-                var restaurant = await _context.Restaurants.FindAsync(request.Id);
+                Restaurant? restaurant = await _context.Restaurants.FindAsync(request.Id);
 
                 if (restaurant == null)
                 {
@@ -255,9 +249,9 @@ namespace FooDrink.Repository.Implementation
 
                 restaurant.IsRegistration = request.IsRegistration;
 
-                await _context.SaveChangesAsync();
+                _ = await _context.SaveChangesAsync();
 
-                var response = new ApproveRestaurantPartnerResponse
+                ApproveRestaurantPartnerResponse response = new()
                 {
                     Data = new List<RestaurantResponse>
             {
@@ -279,10 +273,9 @@ namespace FooDrink.Repository.Implementation
                     IsRegistration = restaurant.IsRegistration,
                     Status = restaurant.Status
                 }
-            }
+            },
+                    Message = request.IsRegistration ? "Successfully approved the restaurant partner" : "Failed to approve the restaurant partner"
                 };
-
-                response.Message = request.IsRegistration ? "Successfully approved the restaurant partner" : "Failed to approve the restaurant partner";
 
                 return response;
             }
@@ -301,17 +294,11 @@ namespace FooDrink.Repository.Implementation
         /// <exception cref="NullReferenceException"></exception>
         public IEnumerable<Restaurant> GetWithPaging(IPagingRequest pagingRequest)
         {
-            if (pagingRequest == null)
-            {
-                throw new ArgumentNullException(nameof(pagingRequest));
-            }
-
-            if (_context.Restaurants == null)
-            {
-                throw new NullReferenceException("Restaurant database context is null");
-            }
-
-            return _context.Restaurants
+            return pagingRequest == null
+                ? throw new ArgumentNullException(nameof(pagingRequest))
+                : _context.Restaurants == null
+                ? throw new NullReferenceException("Restaurant database context is null")
+                : (IEnumerable<Restaurant>)_context.Restaurants
                 .Skip(pagingRequest.PageSize * (pagingRequest.PageIndex - 1))
                 .Take(pagingRequest.PageSize)
                 .ToList();
@@ -328,13 +315,13 @@ namespace FooDrink.Repository.Implementation
             {
                 throw new NullReferenceException("Restaurant database context is null");
             }
-            var restaurant = await _context.Restaurants.FindAsync(restaurantId);
+            Restaurant? restaurant = await _context.Restaurants.FindAsync(restaurantId);
             if (restaurant == null)
             {
                 throw new ArgumentException("Restaurant not found");
             }
-            var imageList = restaurant.ImageList.Split(',')
-                .Select(image => $"/image/restaurant/{restaurantId}/{image.Trim()}")
+            List<string> imageList = restaurant.ImageList.Split(',')
+                .Select(image => $"{image}")
                 .Where(image => !string.IsNullOrWhiteSpace(image))
                 .ToList();
 

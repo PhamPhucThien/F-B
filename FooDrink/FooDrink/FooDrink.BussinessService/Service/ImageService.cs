@@ -2,11 +2,6 @@
 using FooDrink.DTO.Request.Image;
 using FooDrink.DTO.Response.Image;
 using FooDrink.Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FooDrink.BussinessService.Service
 {
@@ -22,6 +17,10 @@ namespace FooDrink.BussinessService.Service
         public async Task<UploadImageResponse> UploadImagesAsync(UploadImageRequest request, string webRootPath)
         {
             return await _handleImageRepository.UploadImagesAsync(request, webRootPath);
+        }
+        public async Task<List<string>> GetEntityImageListAsync(string rootPath, string entityType, Guid entityId)
+        {
+            return await _handleImageRepository.GetEntityImageListAsync(rootPath, entityType, entityId);
         }
     }
 }

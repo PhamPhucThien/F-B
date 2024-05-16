@@ -4,11 +4,6 @@ using FooDrink.DTO.Response.Image;
 using FooDrink.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FooDrink.Repository.Implementation
 {
@@ -24,24 +19,24 @@ namespace FooDrink.Repository.Implementation
 
         public async Task<UploadImageResponse> UploadImagesAsync(UploadImageRequest request, string webRootPath)
         {
-            var response = new UploadImageResponse();
+            UploadImageResponse response = new();
 
             try
             {
                 string folderPath = Path.Combine(webRootPath, "image", request.EntityType.ToLower(), request.EntityId.ToString());
                 if (!Directory.Exists(folderPath))
                 {
-                    Directory.CreateDirectory(folderPath);
+                    _ = Directory.CreateDirectory(folderPath);
                 }
 
-                foreach (var image in request.Images)
+                foreach (IFormFile image in request.Images)
                 {
                     if (image.Length > 0 && IsValidImage(image))
                     {
-                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
-                        var filePath = Path.Combine(folderPath, fileName);
+                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                        string filePath = Path.Combine(folderPath, fileName);
 
-                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        using (FileStream stream = new(filePath, FileMode.Create))
                         {
                             await image.CopyToAsync(stream);
                         }
@@ -53,11 +48,11 @@ namespace FooDrink.Repository.Implementation
                                 {
                                     throw new NullReferenceException("Restaurant database context is null");
                                 }
-                                var restaurant = await _context.Restaurants.FindAsync(request.EntityId);
+                                Database.Models.Restaurant? restaurant = await _context.Restaurants.FindAsync(request.EntityId);
                                 if (restaurant != null)
                                 {
                                     restaurant.ImageList += (string.IsNullOrEmpty(restaurant.ImageList) ? "" : ",") + $"/image/{request.EntityType.ToLower()}/{request.EntityId}/{fileName}";
-                                    _context.Restaurants.Update(restaurant);
+                                    _ = _context.Restaurants.Update(restaurant);
                                 }
                                 break;
                             case "product":
@@ -65,11 +60,11 @@ namespace FooDrink.Repository.Implementation
                                 {
                                     throw new NullReferenceException("Product database context is null");
                                 }
-                                var product = await _context.Products.FindAsync(request.EntityId);
+                                Database.Models.Product? product = await _context.Products.FindAsync(request.EntityId);
                                 if (product != null)
                                 {
                                     product.ImageList += (string.IsNullOrEmpty(product.ImageList) ? "" : ",") + $"/image/{request.EntityType.ToLower()}/{request.EntityId}/{fileName}";
-                                    _context.Products.Update(product);
+                                    _ = _context.Products.Update(product);
                                 }
                                 break;
                             case "user":
@@ -77,11 +72,11 @@ namespace FooDrink.Repository.Implementation
                                 {
                                     throw new NullReferenceException("User database context is null");
                                 }
-                                var user = await _context.Users.FindAsync(request.EntityId);
+                                Database.Models.User? user = await _context.Users.FindAsync(request.EntityId);
                                 if (user != null)
                                 {
                                     user.Image += (string.IsNullOrEmpty(user.Image) ? "" : ",") + $"/image/{request.EntityType.ToLower()}/{request.EntityId}/{fileName}";
-                                    _context.Users.Update(user);
+                                    _ = _context.Users.Update(user);
                                 }
                                 break;
                             case "review":
@@ -89,11 +84,11 @@ namespace FooDrink.Repository.Implementation
                                 {
                                     throw new NullReferenceException("Restaurant database context is null");
                                 }
-                                var review = await _context.Reviews.FindAsync(request.EntityId);
+                                Database.Models.Review? review = await _context.Reviews.FindAsync(request.EntityId);
                                 if (review != null)
                                 {
                                     review.ImageList += (string.IsNullOrEmpty(review.ImageList) ? "" : ",") + $"/image/{request.EntityType.ToLower()}/{request.EntityId}/{fileName}";
-                                    _context.Reviews.Update(review);
+                                    _ = _context.Reviews.Update(review);
                                 }
                                 break;
 
@@ -101,7 +96,7 @@ namespace FooDrink.Repository.Implementation
                                 break;
                         }
 
-                        await _context.SaveChangesAsync();
+                        _ = await _context.SaveChangesAsync();
 
                         response.ImageUrls.Add($"/image/{request.EntityType.ToLower()}/{request.EntityId}/{fileName}");
                     }
@@ -152,8 +147,8 @@ namespace FooDrink.Repository.Implementation
             }
 
             string[] imageFiles = Directory.GetFiles(folderPath);
-            List<string> imageUrls = new List<string>();
-            foreach (var imageFile in imageFiles)
+            List<string> imageUrls = new();
+            foreach (string imageFile in imageFiles)
             {
                 string fileName = Path.GetFileName(imageFile);
                 imageUrls.Add(GetImageUrl(rootPath, entityType, entityId, fileName));
@@ -165,8 +160,8 @@ namespace FooDrink.Repository.Implementation
 
         private bool IsValidImage(IFormFile file)
         {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            string[] allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            string extension = Path.GetExtension(file.FileName).ToLowerInvariant();
             return allowedExtensions.Contains(extension);
         }
     }

@@ -1,4 +1,5 @@
-﻿using FooDrink.BussinessService.Interface;
+﻿using FooDrink.API.Configuration;
+using FooDrink.BussinessService.Interface;
 using FooDrink.DTO.Request.Restaurant;
 using FooDrink.DTO.Response.Restaurant;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace FooDrink.API.Controllers
     public class RestaurantController : ControllerBase
     {
         private readonly IRestaurantService _restaurantService;
+        private readonly ApppSettingConfig _appSettingConfig;
 
-        public RestaurantController(IRestaurantService restaurantService)
+        public RestaurantController(IRestaurantService restaurantService, ApppSettingConfig apppSettingConfig)
         {
             _restaurantService = restaurantService;
+            _appSettingConfig = apppSettingConfig;
         }
 
         /// <summary>
@@ -28,6 +31,13 @@ namespace FooDrink.API.Controllers
             try
             {
                 RestaurantGetListResponse response = await _restaurantService.GetRestaurantsAsync(request);
+                List<RestaurantResponse> listData = response.Data;
+
+                foreach (RestaurantResponse item in listData)
+                {
+                    item.ImageList = item.ImageList.Select(img => _appSettingConfig.Domain + img).ToList();
+                }
+                response.Data = listData;
                 return Ok(response);
             }
             catch (Exception ex)

@@ -64,7 +64,7 @@ namespace FooDrink.BussinessService.Service
         {
             try
             {
-                var response = await _restaurantRepository.GetRestaurantsByLocationAsync(request);
+                RestaurantGetByLocationResponse response = await _restaurantRepository.GetRestaurantsByLocationAsync(request);
                 return response;
             }
             catch (Exception ex)
@@ -84,16 +84,13 @@ namespace FooDrink.BussinessService.Service
         {
             try
             {
-                var restaurant = await _restaurantRepository.GetByIdAsync(request.Id);
+                Restaurant? restaurant = await _restaurantRepository.GetByIdAsync(request.Id);
 
-                if (restaurant == null)
-                {
-                    throw new ArgumentException("Restaurant not found");
-                }
-
-                return new RestaurantGetByIdResponse
-                {
-                    Data = new List<RestaurantResponse>
+                return restaurant == null
+                    ? throw new ArgumentException("Restaurant not found")
+                    : new RestaurantGetByIdResponse
+                    {
+                        Data = new List<RestaurantResponse>
             {
                 new RestaurantResponse
                 {
@@ -109,7 +106,7 @@ namespace FooDrink.BussinessService.Service
                     IsRegistration = restaurant.IsRegistration,
                 }
             }
-                };
+                    };
             }
             catch (Exception ex)
             {
@@ -124,7 +121,7 @@ namespace FooDrink.BussinessService.Service
         /// <returns></returns>
         public async Task<bool> DeleteRestaurantByIdAsync(Guid id)
         {
-            var restaurant = await _restaurantRepository.GetByIdAsync(id);
+            Restaurant? restaurant = await _restaurantRepository.GetByIdAsync(id);
             if (restaurant == null)
             {
                 return false;
@@ -154,7 +151,7 @@ namespace FooDrink.BussinessService.Service
 
             try
             {
-                User newUser = new User
+                User newUser = new()
                 {
                     Id = Guid.NewGuid(),
                     Username = request.Username,
@@ -170,12 +167,12 @@ namespace FooDrink.BussinessService.Service
                     CreatedAt = DateTime.UtcNow,
                     UpdatedBy = request.Username,
                     UpdatedAt = DateTime.UtcNow,
-                  
+
                 };
 
                 User addedUser = await _userRepository.AddAsync(newUser);
 
-                Restaurant restaurant = new Restaurant
+                Restaurant restaurant = new()
                 {
                     Id = Guid.NewGuid(),
                     RestaurantName = request.RestaurantName,
@@ -201,9 +198,9 @@ namespace FooDrink.BussinessService.Service
                 Restaurant addedRestaurant = await _restaurantRepository.AddAsync(restaurant);
 
                 addedUser.RestaurantId = addedRestaurant.Id;
-                await _userRepository.EditAsync(addedUser);
+                _ = await _userRepository.EditAsync(addedUser);
 
-                RestaurantAddResponse response = new RestaurantAddResponse
+                RestaurantAddResponse response = new()
                 {
                     Data = new List<RestaurantResponse>
             {
@@ -244,7 +241,7 @@ namespace FooDrink.BussinessService.Service
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<RestaurantUpdateResponse> UpdateRestaurantAsync(RestaurantUpdateRequest request)
         {
-            var existingRestaurant = await _restaurantRepository.GetByIdAsync(request.Id);
+            Restaurant? existingRestaurant = await _restaurantRepository.GetByIdAsync(request.Id);
             if (existingRestaurant == null)
             {
                 throw new InvalidOperationException("Failed to update restaurant: restaurant not found.");
@@ -260,14 +257,11 @@ namespace FooDrink.BussinessService.Service
             existingRestaurant.IsRegistration = request.IsRegistration;
 
             bool isEdited = await _restaurantRepository.EditAsync(existingRestaurant);
-            if (!isEdited)
-            {
-                throw new InvalidOperationException("Failed to update restaurant.");
-            }
-
-            return new RestaurantUpdateResponse
-            {
-                Data = new List<RestaurantResponse>
+            return !isEdited
+                ? throw new InvalidOperationException("Failed to update restaurant.")
+                : new RestaurantUpdateResponse
+                {
+                    Data = new List<RestaurantResponse>
         {
             new RestaurantResponse
             {
@@ -282,7 +276,7 @@ namespace FooDrink.BussinessService.Service
                 IsRegistration = existingRestaurant.IsRegistration
             }
         }
-            };
+                };
         }
 
         /// <summary>

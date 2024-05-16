@@ -1,4 +1,5 @@
-﻿using FooDrink.Infrastructure;
+﻿using FooDrink.API.Configuration;
+using FooDrink.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -13,6 +14,9 @@ configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnCha
 
 IConfiguration configuration = configurationBuilder.Build();
 // Add services to the container.
+ApppSettingConfig appSettingConfig = builder.Configuration.Get<ApppSettingConfig>();
+builder.Services.AddSingleton(appSettingConfig);
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
