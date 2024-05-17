@@ -89,7 +89,6 @@ namespace FooDrink.Repository.Implementation
             }
         }
 
-
         /// <summary>
         /// GetRestaurantsByLocationAsync
         /// </summary>
@@ -144,7 +143,6 @@ namespace FooDrink.Repository.Implementation
                 throw new Exception("An error occurred while fetching restaurants by location.", ex);
             }
         }
-
 
         /// <summary>
         /// AddAsync

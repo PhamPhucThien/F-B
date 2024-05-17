@@ -24,6 +24,9 @@ namespace FooDrink.Infrastructure
             _ = services.AddScoped<IUserService, UserService>();
             _ = services.AddScoped<IHandleImageRepository, HandleImageRepository>();
             _ = services.AddScoped<IImageService, ImageService>();
+            _ = services.AddScoped<IReviewRepository, ReviewRepository>();
+            _ = services.AddScoped<IReviewService, ReviewService>();
+            _ = services.AddScoped<IUserReviewReactionRepository, UserReviewReactionRepository>();
         }
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)

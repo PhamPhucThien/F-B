@@ -55,6 +55,13 @@ namespace FooDrink.API.Controllers
             try
             {
                 RestaurantGetByLocationResponse response = await _restaurantService.GetRestaurantsByLocationAsync(request);
+                List<RestaurantResponse> listData = response.Data;
+
+                foreach (RestaurantResponse item in listData)
+                {
+                    item.ImageList = item.ImageList.Select(img => _appSettingConfig.Domain + img).ToList();
+                }
+                response.Data = listData;
                 return Ok(response);
             }
             catch (Exception ex)
