@@ -17,6 +17,7 @@ namespace FooDrink.Database
         public DbSet<Product>? Products { get; set; }
 
         public DbSet<Review>? Reviews { get; set; }
+        public DbSet<UserReviewReaction>? UserReviewReactions { get; set; }
 
         public FooDrinkDbContext(DbContextOptions<FooDrinkDbContext> options) : base(options)
         {
@@ -31,6 +32,7 @@ namespace FooDrink.Database
             _ = modelBuilder.ApplyConfiguration(new RestaurantConfig());
             _ = modelBuilder.ApplyConfiguration(new ReviewConfig());
             _ = modelBuilder.ApplyConfiguration(new UserConfig());
+            _ = modelBuilder.ApplyConfiguration(new UserReviewConfig());
         }
     }
 }

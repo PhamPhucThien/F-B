@@ -24,5 +24,6 @@ namespace FooDrink.Repository.Interface
         /// <param name="reviewId"></param>
         /// <returns></returns>
         Task<List<string>> GetReviewImageUrlsAsync(Guid reviewId);
+
     }
 }

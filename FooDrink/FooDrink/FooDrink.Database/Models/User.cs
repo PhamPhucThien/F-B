@@ -14,5 +14,6 @@
         public Guid RestaurantId { get; set; }
         public ICollection<Restaurant>? Restaurants { get; set; }
         public ICollection<Review>? Reviews { get; set; }
+        public ICollection<UserReviewReaction> UserReviewReactions { get; set; } = new List<UserReviewReaction>();
     }
 }

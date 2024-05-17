@@ -8,11 +8,16 @@ namespace FooDrink.Database.Configuration
     {
         public void Configure(EntityTypeBuilder<Review> builder)
         {
-            builder.HasOne(r => r.User)
+            _ = builder.HasOne(r => r.User)
                    .WithMany(user => user.Reviews);
 
-            builder.HasOne(r => r.Restaurant)
+            _ = builder.HasOne(r => r.Restaurant)
                    .WithMany(res => res.Reviews);
+
+            _ = builder.HasMany(r => r.UserReviewReactions)
+                   .WithOne(urr => urr.Review)
+                   .HasForeignKey(urr => urr.ReviewId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

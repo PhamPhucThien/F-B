@@ -173,5 +173,20 @@ namespace FooDrink.API.Controllers
                 reviewResponse.ImageList = reviewResponse.ImageList.Select(img => _appSettingConfig.Domain + img).ToList();
             }
         }
+
+        [HttpPost("toggle-reaction")]
+        public async Task<IActionResult> ToggleReactionAsync([FromBody] ToggleReactionRequest request)
+        {
+            try
+            {
+                await _reviewService.ToggleReactionAsync(request);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

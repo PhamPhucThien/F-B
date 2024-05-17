@@ -8,10 +8,12 @@ namespace FooDrink.BussinessService.Service
 {
     public class ReviewService : IReviewService
     {
+        private readonly IUserReviewReactionRepository _userReviewReactionRepository;
         private readonly IReviewRepository _reviewRepository;
 
-        public ReviewService(IReviewRepository reviewRepository)
+        public ReviewService(IUserReviewReactionRepository userReviewReactionRepository, IReviewRepository reviewRepository)
         {
+            _userReviewReactionRepository = userReviewReactionRepository;
             _reviewRepository = reviewRepository;
         }
 
@@ -322,6 +324,33 @@ namespace FooDrink.BussinessService.Service
         public async Task<List<string>> GetReviewImageUrlsAsync(Guid reviewId)
         {
             return await _reviewRepository.GetReviewImageUrlsAsync(reviewId);
+        }
+
+        public async Task ToggleReactionAsync(ToggleReactionRequest request)
+        {
+            UserReviewReaction? reaction = await _userReviewReactionRepository.GetUserReviewReactionAsync(request);
+
+            if (reaction != null)
+            {
+                await _userReviewReactionRepository.RemoveUserReviewReactionAsync(reaction);
+            }
+            else
+            {
+                UserReviewReaction newReaction = new()
+                {
+                    UserId = request.UserId,
+                    ReviewId = request.ReviewId,
+                    IsLiked = true
+                };
+                await _userReviewReactionRepository.AddUserReviewReactionAsync(newReaction);
+            }
+
+            Review? review = await _reviewRepository.GetByIdAsync(request.ReviewId);
+            if (review != null)
+            {
+                review.Reaction = await _userReviewReactionRepository.GetReactionCountAsync(request.ReviewId);
+                _ = await _reviewRepository.EditAsync(review);
+            }
         }
     }
 }

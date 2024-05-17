@@ -14,5 +14,7 @@
         public int Reaction { get; set; }
         public User? User { get; set; }
         public Restaurant? Restaurant { get; set; }
+
+        public ICollection<UserReviewReaction> UserReviewReactions { get; set; } = new List<UserReviewReaction>();
     }
 }

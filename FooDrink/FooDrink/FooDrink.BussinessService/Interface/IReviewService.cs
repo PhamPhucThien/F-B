@@ -13,5 +13,7 @@ namespace FooDrink.BussinessService.Interface
         Task<ReviewGetByRestaurantIdResponse> GetReviewsByRestaurantIdAsync(ReviewGetByRestaurantIdRequest request);
         Task<ReviewGetListResponse> GetReviewsAsync(ReviewGetListRequest request);
         Task<List<string>> GetReviewImageUrlsAsync(Guid reviewId);
+        Task ToggleReactionAsync(ToggleReactionRequest request);
+
     }
 }
