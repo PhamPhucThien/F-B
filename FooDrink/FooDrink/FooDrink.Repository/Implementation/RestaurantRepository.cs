@@ -69,7 +69,9 @@ namespace FooDrink.Repository.Implementation
                         ImageList = imageUrls,
                         TotalRevenue = restaurant.TotalRevenue,
                         DailyRevenue = restaurant.DailyRevenue,
-                        MonthlyRevenue = restaurant.MonthlyRevenue
+                        MonthlyRevenue = restaurant.MonthlyRevenue,
+                        IsRegistration = restaurant.IsRegistration,
+                        Status = restaurant.Status,
                     };
                     RestaurantGetListResponse getListResponse = new()
                     {
@@ -132,7 +134,9 @@ namespace FooDrink.Repository.Implementation
                         ImageList = imageUrls,
                         TotalRevenue = restaurant.TotalRevenue,
                         DailyRevenue = restaurant.DailyRevenue,
-                        MonthlyRevenue = restaurant.MonthlyRevenue
+                        MonthlyRevenue = restaurant.MonthlyRevenue,
+                        IsRegistration = restaurant.IsRegistration,
+                        Status = restaurant.Status,
                     });
                 }
 

@@ -15,7 +15,7 @@
         public string TotalRevenue { get; set; } = string.Empty;
         public string DailyRevenue { get; set; } = string.Empty;
         public string MonthlyRevenue { get; set; } = string.Empty;
-        public bool IsRegistration { get; set; }
-        public bool Status { get; set; }
+        public bool IsRegistration { get; set; } = false;
+        public bool Status { get; set; } = true;
     }
 }

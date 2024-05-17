@@ -104,6 +104,7 @@ namespace FooDrink.BussinessService.Service
                     Hotline = restaurant.Hotline,
                     AverageRating = restaurant.AverageRating,
                     IsRegistration = restaurant.IsRegistration,
+                    Status = restaurant.Status,
                 }
             }
                     };
@@ -193,6 +194,7 @@ namespace FooDrink.BussinessService.Service
                     TotalRevenue = "",
                     DailyRevenue = "",
                     MonthlyRevenue = "",
+
                 };
 
                 Restaurant addedRestaurant = await _restaurantRepository.AddAsync(restaurant);
@@ -219,7 +221,8 @@ namespace FooDrink.BussinessService.Service
                     TotalRevenue = addedRestaurant.TotalRevenue,
                     DailyRevenue = addedRestaurant.DailyRevenue,
                     MonthlyRevenue = addedRestaurant.MonthlyRevenue,
-                    IsRegistration = addedRestaurant.IsRegistration
+                    IsRegistration = addedRestaurant.IsRegistration,
+                    Status = addedRestaurant.Status,
                 }
             }
                 };
@@ -273,7 +276,13 @@ namespace FooDrink.BussinessService.Service
                 City = existingRestaurant.City,
                 Country = existingRestaurant.Country,
                 Hotline = existingRestaurant.Hotline,
-                IsRegistration = existingRestaurant.IsRegistration
+                AverageRating = existingRestaurant.AverageRating,
+                DailyRevenue = existingRestaurant.DailyRevenue,
+                MonthlyRevenue = existingRestaurant.MonthlyRevenue,
+                TotalRevenue = existingRestaurant.TotalRevenue,
+                IsRegistration = existingRestaurant.IsRegistration,
+                Status = existingRestaurant.Status
+
             }
         }
                 };
