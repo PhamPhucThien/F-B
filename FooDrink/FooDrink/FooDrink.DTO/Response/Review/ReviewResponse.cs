@@ -7,7 +7,7 @@
 
         public Guid RestaurantId { get; set; }
 
-        public string ImageList { get; set; } = string.Empty;
+        public List<string> ImageList { get; set; } = new List<string>();
 
         public string Content { get; set; } = string.Empty;
 
