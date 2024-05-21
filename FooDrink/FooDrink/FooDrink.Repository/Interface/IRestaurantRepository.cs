@@ -9,6 +9,7 @@ namespace FooDrink.Repository.Interface
         Task<IEnumerable<RestaurantGetListResponse>> GetRestaurantsAsync(RestaurantGetListRequest request);
         Task<ApproveRestaurantPartnerResponse> ApproveRestaurantPartnerAsync(ApproveRestaurantPartnerRequest request);
         Task<RestaurantGetByLocationResponse> GetRestaurantsByLocationAsync(RestaurantGetByLocationRequest request);
+        Task<List<string>> GetRestaurantImageUrlsAsync(Guid restaurantId);
     }
 }
 

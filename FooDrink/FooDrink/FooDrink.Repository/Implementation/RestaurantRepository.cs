@@ -311,7 +311,7 @@ namespace FooDrink.Repository.Implementation
         /// </summary>
         /// <param name="restaurantId"></param>
         /// <returns></returns>
-        private async Task<List<string>> GetRestaurantImageUrlsAsync(Guid restaurantId)
+        public async Task<List<string>> GetRestaurantImageUrlsAsync(Guid restaurantId)
         {
             if (_context.Restaurants == null)
             {

@@ -86,13 +86,14 @@ namespace FooDrink.BussinessService.Service
             {
                 Restaurant? restaurant = await _restaurantRepository.GetByIdAsync(request.Id);
 
-                return restaurant == null
-                    ? throw new ArgumentException("Restaurant not found")
-                    : new RestaurantGetByIdResponse
-                    {
-                        Data = new List<RestaurantResponse>
-            {
-                new RestaurantResponse
+                if (restaurant == null)
+                {
+                    throw new ArgumentException("Restaurant not found");
+                }
+
+                List<string> imageList = await _restaurantRepository.GetRestaurantImageUrlsAsync(request.Id);
+
+                RestaurantResponse restaurantResponse = new()
                 {
                     Id = restaurant.Id,
                     RestaurantName = restaurant.RestaurantName,
@@ -103,11 +104,18 @@ namespace FooDrink.BussinessService.Service
                     Country = restaurant.Country,
                     Hotline = restaurant.Hotline,
                     AverageRating = restaurant.AverageRating,
+                    ImageList = imageList,
+                    TotalRevenue = restaurant.TotalRevenue,
+                    DailyRevenue = restaurant.DailyRevenue,
+                    MonthlyRevenue = restaurant.MonthlyRevenue,
                     IsRegistration = restaurant.IsRegistration,
-                    Status = restaurant.Status,
-                }
-            }
-                    };
+                    Status = restaurant.Status
+                };
+
+                return new RestaurantGetByIdResponse
+                {
+                    Data = restaurantResponse
+                };
             }
             catch (Exception ex)
             {

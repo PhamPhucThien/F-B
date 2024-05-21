@@ -2,6 +2,6 @@
 {
     public class RestaurantGetByIdResponse
     {
-        public List<RestaurantResponse> Data { get; set; } = new List<RestaurantResponse>();
+        public RestaurantResponse Data { get; set; } = new RestaurantResponse();
     }
 }

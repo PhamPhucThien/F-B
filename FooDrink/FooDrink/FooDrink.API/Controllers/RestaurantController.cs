@@ -74,17 +74,24 @@ namespace FooDrink.API.Controllers
         /// Get restaurant details by ID.
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<RestaurantGetByIdResponse>> GetRestaurantByIdAsync(Guid id)
+        public async Task<IActionResult> GetRestaurantByIdAsync(Guid id)
         {
             try
             {
                 RestaurantGetByIdRequest request = new() { Id = id };
-                RestaurantGetByIdResponse restaurant = await _restaurantService.GetRestaurantByIdAsync(request);
-                return restaurant == null ? (ActionResult<RestaurantGetByIdResponse>)NotFound() : (ActionResult<RestaurantGetByIdResponse>)Ok(restaurant);
+                RestaurantGetByIdResponse response = await _restaurantService.GetRestaurantByIdAsync(request);
+                response.Data.ImageList = response.Data.ImageList
+                .Select(img => _appSettingConfig.Domain + img)
+                .ToList();
+                return Ok(response);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
             }
         }
 
@@ -109,15 +116,14 @@ namespace FooDrink.API.Controllers
         /// Update an existing restaurant.
         /// </summary>
         [HttpPut("UpdateRestaurant")]
-        public async Task<ActionResult<RestaurantUpdateResponse>> UpdateRestaurantAsync(Guid id, RestaurantUpdateRequest request)
+        public async Task<ActionResult<RestaurantUpdateResponse>> UpdateRestaurantAsync(string id, RestaurantUpdateRequest request)
         {
             try
             {
-                if (id != request.Id)
+                if (Guid.Parse(id) != request.Id)
                 {
                     return BadRequest("Id mismatch between request parameter and request body.");
                 }
-
                 RestaurantUpdateResponse updatedRestaurant = await _restaurantService.UpdateRestaurantAsync(request);
                 return updatedRestaurant == null ? (ActionResult<RestaurantUpdateResponse>)NotFound() : (ActionResult<RestaurantUpdateResponse>)Ok(updatedRestaurant);
             }
@@ -131,11 +137,11 @@ namespace FooDrink.API.Controllers
         /// Delete a restaurant by ID.
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteRestaurantByIdAsync(Guid id)
+        public async Task<ActionResult> DeleteRestaurantByIdAsync(string id)
         {
             try
             {
-                bool result = await _restaurantService.DeleteRestaurantByIdAsync(id);
+                bool result = await _restaurantService.DeleteRestaurantByIdAsync(Guid.Parse(id));
                 return !result ? NotFound() : NoContent();
             }
             catch (Exception ex)
@@ -148,11 +154,11 @@ namespace FooDrink.API.Controllers
         /// Approve or disapprove a restaurant partner.
         /// </summary>
         [HttpPut("approve")]
-        public async Task<IActionResult> ApproveRestaurantPartner(Guid id, [FromBody] ApproveRestaurantPartnerRequest request)
+        public async Task<IActionResult> ApproveRestaurantPartner(string id, [FromBody] ApproveRestaurantPartnerRequest request)
         {
             try
             {
-                request.Id = id;
+                request.Id = Guid.Parse(id);
                 ApproveRestaurantPartnerResponse response = await _restaurantService.ApproveRestaurantPartnerAsync(request);
                 return Ok(response);
             }

@@ -85,7 +85,7 @@ namespace FooDrink.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("get/{id}")]
-        public async Task<IActionResult> GetReviewByIdAsync([FromQuery] Guid id)
+        public async Task<IActionResult> GetReviewByIdAsync(Guid id)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace FooDrink.API.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet("get-by-user/{userId}")]
-        public async Task<IActionResult> GetReviewsByUserIdAsync([FromQuery] Guid userId)
+        public async Task<IActionResult> GetReviewsByUserIdAsync(Guid userId)
         {
             try
             {
@@ -127,7 +127,7 @@ namespace FooDrink.API.Controllers
         /// <param name="restaurantId"></param>
         /// <returns></returns>
         [HttpGet("get-by-restaurant/{restaurantId}")]
-        public async Task<IActionResult> GetReviewsByRestaurantIdAsync([FromQuery] Guid restaurantId)
+        public async Task<IActionResult> GetReviewsByRestaurantIdAsync(Guid restaurantId)
         {
             try
             {
