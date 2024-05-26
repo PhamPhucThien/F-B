@@ -73,6 +73,15 @@ builder.Services.AddSwaggerGen(x =>
         }
     });
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("https://foo.dangthanhquy.io.vn/api/Authentication/Login")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
 
 WebApplication app = builder.Build();
 
@@ -84,7 +93,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     _ = app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "FooDrink API v1");
-        c.RoutePrefix = string.Empty; // Set Swagger UI at root
+        c.RoutePrefix = string.Empty;
     });
 }
 
@@ -99,8 +108,8 @@ app.Use(async (context, next) =>
 
     await next();
 });
-
 app.UseHttpsRedirection();
+app.UseCors("AllowSpecificOrigin");
 app.UseStaticFiles();
 app.UseAuthentication();
 
