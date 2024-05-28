@@ -16,12 +16,6 @@ namespace FooDrink.BussinessService.Service
             _jwtTokenGenerator = jwtTokenGenerator;
         }
 
-        public IRepository<Product>? ProductRepository => throw new NotImplementedException();
-
-        public IRepository<User>? UserRepository => throw new NotImplementedException();
-
-        public IRepository<User>? AuthenticationRepository => throw new NotImplementedException();
-
         public async Task<AuthenticationResponse> Login(LoginRequest request)
         {
             AuthenticationResponse response = new();
