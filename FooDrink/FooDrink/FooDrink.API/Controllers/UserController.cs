@@ -1,6 +1,9 @@
 ﻿using FooDrink.BussinessService.Interface;
+using FooDrink.BussinessService.Service;
 using FooDrink.DTO.Request.User;
 using FooDrink.DTO.Response.User;
+using FooDrink.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FooDrink.API.Controllers
@@ -121,6 +124,30 @@ namespace FooDrink.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "An error occurred while updating the user.", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet("get-user-by-jwt")]
+        [Authorize]
+        public async Task<IActionResult> GetByJwt()
+        {
+            try
+            {
+                Guid userId = Guid.Parse(HttpContext.GetName());
+
+                UserGetByIdRequest request = new() { Id = userId };
+                var response = await _userService.GetUserByIdAsync(request);
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
     }

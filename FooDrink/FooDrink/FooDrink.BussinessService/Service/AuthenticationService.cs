@@ -31,6 +31,7 @@ namespace FooDrink.BussinessService.Service
             if (user != null)
             {
                 response.Token = _jwtTokenGenerator.GenerateToken(user.Id, user.Role);
+                response.Role = user.Role;
             }
             else
             {
@@ -61,6 +62,7 @@ namespace FooDrink.BussinessService.Service
                 };
                 _ = await _authenticationRepository.AddAsync(newUser);
                 response.Token = _jwtTokenGenerator.GenerateToken(newUser.Id, newUser.Role);
+                response.Role= newUser.Role;
             }
             else
             {
