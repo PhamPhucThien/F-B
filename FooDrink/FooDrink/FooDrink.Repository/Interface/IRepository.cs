@@ -1,7 +1,4 @@
 ﻿using FooDrink.DTO.Request;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FooDrink.Repository.Interface
 {

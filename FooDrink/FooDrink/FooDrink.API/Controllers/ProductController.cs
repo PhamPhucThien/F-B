@@ -1,6 +1,4 @@
-﻿using FooDrink.BussinessService.Service;
-using FooDrink.DTO.Request.Product;
-using FooDrink.Repository.Interface;
+﻿using FooDrink.Repository.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FooDrink.API.Controllers

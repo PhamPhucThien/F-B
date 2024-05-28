@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FooDrink.Database;
+﻿using FooDrink.Database;
 using FooDrink.DTO.Request;
 using FooDrink.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -20,22 +16,22 @@ namespace FooDrink.Repository
 
         public async Task<T> AddAsync(T entity)
         {
-            using (var context = new FooDrinkDbContext(_contextOptions))
+            using (FooDrinkDbContext context = new(_contextOptions))
             {
-                await context.Set<T>().AddAsync(entity);
-                await context.SaveChangesAsync();
+                _ = await context.Set<T>().AddAsync(entity);
+                _ = await context.SaveChangesAsync();
             }
             return entity;
         }
 
         public async Task<bool> DeleteByIdAsync(Guid id)
         {
-            using var context = new FooDrinkDbContext(_contextOptions);
-            var entity = await context.Set<T>().FindAsync(id);
+            using FooDrinkDbContext context = new(_contextOptions);
+            T? entity = await context.Set<T>().FindAsync(id);
             if (entity != null)
             {
-                context.Set<T>().Remove(entity);
-                await context.SaveChangesAsync();
+                _ = context.Set<T>().Remove(entity);
+                _ = await context.SaveChangesAsync();
                 return true;
             }
             return false;
@@ -43,22 +39,22 @@ namespace FooDrink.Repository
 
         public async Task<bool> EditAsync(T entity)
         {
-            using var context = new FooDrinkDbContext(_contextOptions);
+            using FooDrinkDbContext context = new(_contextOptions);
             context.Entry(entity).State = EntityState.Modified;
-            await context.SaveChangesAsync();
+            _ = await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<IEnumerable<T>> GetAll()
         {
-            using var context = new FooDrinkDbContext(_contextOptions);
+            using FooDrinkDbContext context = new(_contextOptions);
             return await context.Set<T>().ToListAsync();
         }
 
         public async Task<T?> GetByIdAsync(Guid id)
         {
-            using var context = new FooDrinkDbContext(_contextOptions);
-            var entity = await context.Set<T>().FindAsync(id);
+            using FooDrinkDbContext context = new(_contextOptions);
+            T? entity = await context.Set<T>().FindAsync(id);
             if (entity == null)
             {
                 Console.WriteLine($"Entity with ID {id} not found.");
@@ -73,8 +69,8 @@ namespace FooDrink.Repository
                 throw new ArgumentNullException(nameof(pagingRequest));
             }
 
-            using var context = new FooDrinkDbContext(_contextOptions);
-            var query = context.Set<T>().AsQueryable();
+            using FooDrinkDbContext context = new(_contextOptions);
+            IQueryable<T> query = context.Set<T>().AsQueryable();
 
             query = query.Skip(pagingRequest.PageSize * (pagingRequest.PageIndex - 1))
                          .Take(pagingRequest.PageSize);

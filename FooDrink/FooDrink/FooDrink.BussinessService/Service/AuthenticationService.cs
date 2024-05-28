@@ -2,13 +2,7 @@
 using FooDrink.Database.Models;
 using FooDrink.DTO.Request.Authentication;
 using FooDrink.DTO.Response.Authentication;
-using FooDrink.Repository;
 using FooDrink.Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FooDrink.BussinessService.Service
 {
@@ -30,14 +24,15 @@ namespace FooDrink.BussinessService.Service
 
         public async Task<AuthenticationResponse> Login(LoginRequest request)
         {
-            var response = new AuthenticationResponse();
+            AuthenticationResponse response = new();
 
-            var user = await _authenticationRepository.GetByUsernameAndPassword(request.Username, request.Password);
+            User? user = await _authenticationRepository.GetByUsernameAndPassword(request.Username, request.Password);
 
             if (user != null)
             {
                 response.Token = _jwtTokenGenerator.GenerateToken(user.Id, user.FullName);
-            } else
+            }
+            else
             {
                 response.Message = "Wrong username or password";
             }
@@ -48,13 +43,14 @@ namespace FooDrink.BussinessService.Service
 
         public async Task<AuthenticationResponse> Register(RegisterRequest request)
         {
-            var response = new AuthenticationResponse();
+            AuthenticationResponse response = new();
 
-            var user = await _authenticationRepository.GetByUsername(request.Username);
+            User? user = await _authenticationRepository.GetByUsername(request.Username);
 
             if (user == null)
             {
-                User newUser = new() {
+                User newUser = new()
+                {
                     Username = request.Username,
                     Password = request.Password,
                     FullName = request.Fullname,

@@ -1,9 +1,6 @@
 ﻿using FooDrink.BussinessService.Interface;
-using FooDrink.BussinessService.Service;
 using FooDrink.DTO.Request.Authentication;
 using FooDrink.DTO.Response.Authentication;
-using FooDrink.Repository.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FooDrink.API.Controllers
@@ -13,7 +10,7 @@ namespace FooDrink.API.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
-        public AuthenticationController(IAuthenticationService authenticationService) 
+        public AuthenticationController(IAuthenticationService authenticationService)
         {
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
         }
@@ -28,15 +25,15 @@ namespace FooDrink.API.Controllers
         {
             try
             {
-                var response = await _authenticationService.Login(request);
+                AuthenticationResponse response = await _authenticationService.Login(request);
                 return Ok(response);
-            } 
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
-        
+
         /// <summary>
         /// Register new account
         /// </summary>
@@ -47,7 +44,7 @@ namespace FooDrink.API.Controllers
         {
             try
             {
-                var response = await _authenticationService.Register(request);
+                AuthenticationResponse response = await _authenticationService.Register(request);
                 return Ok(response);
             }
             catch (Exception ex)

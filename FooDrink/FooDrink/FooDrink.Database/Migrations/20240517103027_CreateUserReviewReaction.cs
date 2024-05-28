@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -9,7 +8,7 @@ namespace FooDrink.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "UserReviewReactions",
                 columns: table => new
                 {
@@ -19,14 +18,14 @@ namespace FooDrink.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserReviewReactions", x => new { x.UserId, x.ReviewId });
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_UserReviewReactions", x => new { x.UserId, x.ReviewId });
+                    _ = table.ForeignKey(
                         name: "FK_UserReviewReactions_Reviews_ReviewId",
                         column: x => x.ReviewId,
                         principalTable: "Reviews",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_UserReviewReactions_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
@@ -34,7 +33,7 @@ namespace FooDrink.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_UserReviewReactions_ReviewId",
                 table: "UserReviewReactions",
                 column: "ReviewId");
@@ -42,7 +41,7 @@ namespace FooDrink.Database.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "UserReviewReactions");
         }
     }

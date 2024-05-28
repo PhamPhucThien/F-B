@@ -8,14 +8,14 @@ namespace FooDrink.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
+            _ = migrationBuilder.AddColumn<int>(
                 name: "Reaction",
                 table: "Reviews",
                 type: "int",
                 nullable: true,
                 defaultValue: 0);
 
-            migrationBuilder.AddColumn<string>(
+            _ = migrationBuilder.AddColumn<string>(
                 name: "OrderStatus",
                 table: "Orders",
                 type: "nvarchar(max)",
@@ -25,11 +25,11 @@ namespace FooDrink.Database.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
+            _ = migrationBuilder.DropColumn(
                 name: "Reaction",
                 table: "Reviews");
 
-            migrationBuilder.DropColumn(
+            _ = migrationBuilder.DropColumn(
                 name: "OrderStatus",
                 table: "Orders");
         }

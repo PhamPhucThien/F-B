@@ -1,6 +1,5 @@
 ﻿using FooDrink.DTO.Request.Image;
 using FooDrink.DTO.Response.Image;
-using System.Threading.Tasks;
 
 namespace FooDrink.Repository.Interface
 {

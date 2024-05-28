@@ -2,15 +2,9 @@
 using FooDrink.Database.Models;
 using FooDrink.DTO.Request;
 using FooDrink.DTO.Request.User;
-using FooDrink.DTO.Response.Restaurant;
 using FooDrink.DTO.Response.User;
 using FooDrink.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FooDrink.Repository.Implementation
 {
@@ -36,8 +30,8 @@ namespace FooDrink.Repository.Implementation
                 throw new NullReferenceException("User database context is null");
             }
 
-            var addedUser = await _context.Users.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<User> addedUser = await _context.Users.AddAsync(entity);
+            _ = await _context.SaveChangesAsync();
 
             return addedUser.Entity;
         }
@@ -80,8 +74,8 @@ namespace FooDrink.Repository.Implementation
                 {
                     throw new NullReferenceException("User database context is null");
                 }
-                _context.Users.Update(entity);
-                await _context.SaveChangesAsync();
+                _ = _context.Users.Update(entity);
+                _ = await _context.SaveChangesAsync();
 
                 return true;
             }
@@ -98,11 +92,9 @@ namespace FooDrink.Repository.Implementation
         /// <exception cref="NullReferenceException"></exception>
         public async Task<IEnumerable<User>> GetAll()
         {
-            if (_context.Users == null)
-            {
-                throw new NullReferenceException("User database context is null");
-            }
-            return await _context.Users.ToListAsync();
+            return _context.Users == null
+                ? throw new NullReferenceException("User database context is null")
+                : (IEnumerable<User>)await _context.Users.ToListAsync();
         }
 
         /// <summary>
@@ -113,11 +105,9 @@ namespace FooDrink.Repository.Implementation
         /// <exception cref="NullReferenceException"></exception>
         public async Task<User?> GetByIdAsync(Guid id)
         {
-            if (_context.Users == null)
-            {
-                throw new NullReferenceException("User database context is null");
-            }
-            return await _context.Users.FindAsync(id);
+            return _context.Users == null
+                ? throw new NullReferenceException("User database context is null")
+                : await _context.Users.FindAsync(id);
         }
 
         /// <summary>
@@ -165,10 +155,10 @@ namespace FooDrink.Repository.Implementation
                             Status = r.Status,
                         }
                     }
-    
+
                 }).ToListAsync();
 
-                return responseList;           
+                return responseList;
             }
             catch (Exception ex)
             {

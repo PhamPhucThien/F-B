@@ -2,12 +2,6 @@
 using FooDrink.Database.Models;
 using FooDrink.DTO.Response.Menu;
 using FooDrink.Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FooDrink.BussinessService.Service
 {

@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FooDrink.DTO", "FooDrink.DT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FooDrink.BussinessService", "FooDrink.BussinessService\FooDrink.BussinessService.csproj", "{0FCE018D-60EE-46BF-AF58-ADCBC706C7AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FooDrink.Repository", "FooDrink.Repository\FooDrink.Repository.csproj", "{B3764657-0F11-42B2-9575-ACBD019A5552}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FooDrink.Repository", "FooDrink.Repository\FooDrink.Repository.csproj", "{B3764657-0F11-42B2-9575-ACBD019A5552}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FooDrink.Tests", "FooDrink.Tests\FooDrink.Tests.csproj", "{1729D2EA-87D6-4701-8A29-376AD8F0E032}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{B3764657-0F11-42B2-9575-ACBD019A5552}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3764657-0F11-42B2-9575-ACBD019A5552}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3764657-0F11-42B2-9575-ACBD019A5552}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1729D2EA-87D6-4701-8A29-376AD8F0E032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1729D2EA-87D6-4701-8A29-376AD8F0E032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1729D2EA-87D6-4701-8A29-376AD8F0E032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1729D2EA-87D6-4701-8A29-376AD8F0E032}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

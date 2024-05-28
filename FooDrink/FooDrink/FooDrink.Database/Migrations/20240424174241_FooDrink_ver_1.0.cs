@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -9,7 +8,7 @@ namespace FooDrink.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Restaurants",
                 columns: table => new
                 {
@@ -34,10 +33,10 @@ namespace FooDrink.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Restaurants", x => x.Id);
+                    _ = table.PrimaryKey("PK_Restaurants", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -60,10 +59,10 @@ namespace FooDrink.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    _ = table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Menus",
                 columns: table => new
                 {
@@ -78,8 +77,8 @@ namespace FooDrink.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Menus", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_Menus", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_Menus_Restaurants_RestaurantId",
                         column: x => x.RestaurantId,
                         principalTable: "Restaurants",
@@ -87,7 +86,7 @@ namespace FooDrink.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -105,15 +104,15 @@ namespace FooDrink.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_Orders", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_Orders_Restaurants_RestaurantId",
                         column: x => x.RestaurantId,
                         principalTable: "Restaurants",
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "RestaurantUser",
                 columns: table => new
                 {
@@ -122,14 +121,14 @@ namespace FooDrink.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RestaurantUser", x => new { x.RestaurantsId, x.UsersId });
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_RestaurantUser", x => new { x.RestaurantsId, x.UsersId });
+                    _ = table.ForeignKey(
                         name: "FK_RestaurantUser_Restaurants_RestaurantsId",
                         column: x => x.RestaurantsId,
                         principalTable: "Restaurants",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_RestaurantUser_Users_UsersId",
                         column: x => x.UsersId,
                         principalTable: "Users",
@@ -137,7 +136,7 @@ namespace FooDrink.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Reviews",
                 columns: table => new
                 {
@@ -155,14 +154,14 @@ namespace FooDrink.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_Reviews", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_Reviews_Restaurants_RestaurantId",
                         column: x => x.RestaurantId,
                         principalTable: "Restaurants",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_Reviews_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
@@ -170,7 +169,7 @@ namespace FooDrink.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -189,8 +188,8 @@ namespace FooDrink.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_Products", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_Products_Menus_MenuId",
                         column: x => x.MenuId,
                         principalTable: "Menus",
@@ -198,33 +197,33 @@ namespace FooDrink.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Menus_RestaurantId",
                 table: "Menus",
                 column: "RestaurantId",
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Orders_RestaurantId",
                 table: "Orders",
                 column: "RestaurantId");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Products_MenuId",
                 table: "Products",
                 column: "MenuId");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_RestaurantUser_UsersId",
                 table: "RestaurantUser",
                 column: "UsersId");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Reviews_RestaurantId",
                 table: "Reviews",
                 column: "RestaurantId");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Reviews_UserId",
                 table: "Reviews",
                 column: "UserId");
@@ -232,25 +231,25 @@ namespace FooDrink.Database.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Orders");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Products");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "RestaurantUser");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Reviews");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Menus");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Users");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Restaurants");
         }
     }

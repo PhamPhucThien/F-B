@@ -1,7 +1,6 @@
 ﻿using FooDrink.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Metadata.Ecma335;
 
 namespace FooDrink.Database.Configuration
 {
@@ -9,7 +8,7 @@ namespace FooDrink.Database.Configuration
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.HasOne( o => o.Restaurant)
+            _ = builder.HasOne(o => o.Restaurant)
                    .WithMany(res => res.Orders);
         }
     }

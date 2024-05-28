@@ -8,7 +8,7 @@ namespace FooDrink.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
+            _ = migrationBuilder.AddColumn<bool>(
                 name: "IsRegistration",
                 table: "Restaurants",
                 type: "bit",
@@ -18,7 +18,7 @@ namespace FooDrink.Database.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
+            _ = migrationBuilder.DropColumn(
                 name: "IsRegistration",
                 table: "Restaurants");
         }

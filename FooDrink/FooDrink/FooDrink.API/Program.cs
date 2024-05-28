@@ -77,7 +77,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
-            .WithOrigins("https://foo.dangthanhquy.io.vn/api/Authentication/Login")
+            .WithOrigins("http://localhost:4321")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());

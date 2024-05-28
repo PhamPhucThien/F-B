@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FooDrink.DTO.Response.Restaurant
+﻿namespace FooDrink.DTO.Response.Restaurant
 {
     public class RestaurantGetByLocationResponse
     {

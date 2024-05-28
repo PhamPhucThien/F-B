@@ -8,10 +8,10 @@ namespace FooDrink.Database.Configuration
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasMany(user => user.Restaurants)
+            _ = builder.HasMany(user => user.Restaurants)
                    .WithMany(res => res.Users);
 
-            builder.HasMany(user => user.Reviews)
+            _ = builder.HasMany(user => user.Reviews)
                    .WithOne(r => r.User);
         }
     }

@@ -1,10 +1,7 @@
 ﻿using FooDrink.BussinessService.Interface;
 using FooDrink.DTO.Response.Menu;
 using FooDrink.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Drawing;
 
 namespace FooDrink.API.Controllers
 {
@@ -31,7 +28,7 @@ namespace FooDrink.API.Controllers
         {
             try
             {
-                var response = await _service.Get(id, page, size);
+                MenuGetResponse response = await _service.Get(id, page, size);
 
                 return Ok(response);
             }
@@ -47,13 +44,13 @@ namespace FooDrink.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("RemoveById")]
-        public async Task<IActionResult> RemoveById([FromQuery]Guid id)
+        public async Task<IActionResult> RemoveById([FromQuery] Guid id)
         {
             try
             {
                 Guid userId = Guid.Parse(HttpContext.GetName());
 
-                var response = await _service.RemoveById(userId, id);
+                bool response = await _service.RemoveById(userId, id);
 
                 return Ok(response);
             }
@@ -64,7 +61,7 @@ namespace FooDrink.API.Controllers
         }
 
         [HttpPost("UpdateById")]
-        public async Task<IActionResult> UpdateById([FromBody] MenuUpdateByIdRequest request)
+        public IActionResult UpdateById([FromBody] MenuUpdateByIdRequest request)
         {
             try
             {

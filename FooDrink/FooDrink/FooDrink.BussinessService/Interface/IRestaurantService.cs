@@ -1,7 +1,5 @@
 ﻿using FooDrink.DTO.Request.Restaurant;
 using FooDrink.DTO.Response.Restaurant;
-using System;
-using System.Threading.Tasks;
 
 namespace FooDrink.BussinessService.Interface
 {

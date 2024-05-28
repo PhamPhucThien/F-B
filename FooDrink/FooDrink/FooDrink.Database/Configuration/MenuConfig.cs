@@ -8,9 +8,9 @@ namespace FooDrink.Database.Configuration
     {
         public void Configure(EntityTypeBuilder<Menu> builder)
         {
-            builder.HasMany(menu => menu.Products)
+            _ = builder.HasMany(menu => menu.Products)
                    .WithOne(product => product.Menu);
-            builder.HasOne(menu => menu.Restaurant)
+            _ = builder.HasOne(menu => menu.Restaurant)
                    .WithOne(res => res.Menu);
         }
     }

@@ -1,6 +1,4 @@
-﻿using FooDrink.DTO.Response.Restaurant;
-
-namespace FooDrink.DTO.Response.User
+﻿namespace FooDrink.DTO.Response.User
 {
     /// <summary>
     /// Get all User

@@ -1,14 +1,7 @@
 ﻿using FooDrink.Database;
 using FooDrink.Database.Models;
-using FooDrink.DTO.Request;
 using FooDrink.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FooDrink.Repository.Implementation
 {
@@ -30,7 +23,7 @@ namespace FooDrink.Repository.Implementation
 
         public async Task<bool> RemoveById(Guid managerId, Guid menuId)
         {
-            using var context = new FooDrinkDbContext(_contextOptions);
+            using FooDrinkDbContext context = new(_contextOptions);
 
             User? updater = await context.Set<User>().Where(a => a.Id == managerId).FirstOrDefaultAsync();
             Menu? entity = await context.Set<Menu>().Where(a => a.Restaurant.Users.Any(f => f.Id == managerId) && a.Id == menuId).FirstOrDefaultAsync();
@@ -41,7 +34,7 @@ namespace FooDrink.Repository.Implementation
                 entity.UpdatedAt = DateTime.UtcNow;
                 entity.UpdatedBy = updater.FullName;
                 context.Entry(entity).State = EntityState.Modified;
-                await context.SaveChangesAsync();
+                _ = await context.SaveChangesAsync();
                 return true;
             }
             return false;

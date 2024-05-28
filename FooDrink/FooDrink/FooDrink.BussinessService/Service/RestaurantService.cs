@@ -135,7 +135,7 @@ namespace FooDrink.BussinessService.Service
             {
                 return false;
             }
-            restaurant.Status = true;
+            restaurant.Status = false;
             bool result = await _restaurantRepository.EditAsync(restaurant);
             return result;
         }

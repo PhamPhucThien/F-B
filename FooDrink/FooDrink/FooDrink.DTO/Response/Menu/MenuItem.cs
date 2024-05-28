@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FooDrink.DTO.Response.Menu
+﻿namespace FooDrink.DTO.Response.Menu
 {
     public class MenuItem
     {
@@ -17,12 +11,12 @@ namespace FooDrink.DTO.Response.Menu
 
         public void Mapping(FooDrink.Database.Models.Product product)
         {
-            this.Id = product.Id;
-            this.Name = product.Name;
-            this.Description = product.Description;
-            this.Price = product.Price;
-            this.CategoryList = product.CategoryList;
-            this.ImageList = product.ImageList;
+            Id = product.Id;
+            Name = product.Name;
+            Description = product.Description;
+            Price = product.Price;
+            CategoryList = product.CategoryList;
+            ImageList = product.ImageList;
         }
     }
 }

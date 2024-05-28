@@ -22,7 +22,7 @@ namespace FooDrink.Infrastructure.Authentication
         }
         public string GenerateToken(Guid id, string role)
         {
-            var claims = new[]
+            Claim[] claims = new[]
             {
                 new Claim(ClaimTypes.Name, id.ToString()),
                 new Claim(ClaimTypes.Role, role)
