@@ -39,7 +39,7 @@ namespace FooDrink.Infrastructure.Authentication
 
             string jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return jwt;
+            return "Bearer " + jwt;
         }
     }
 }

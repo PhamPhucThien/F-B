@@ -42,5 +42,12 @@ namespace FooDrink.BussinessService.Interface
         /// Search restaurants by location coordinates.
         /// </summary>
         Task<RestaurantGetByLocationResponse> GetRestaurantsByLocationAsync(RestaurantGetByLocationRequest request);
+
+        /// <summary>
+        /// Find by id contain in jwt string
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<RestaurantGetByIdResponse> GetByJwt(Guid id);
     }
 }

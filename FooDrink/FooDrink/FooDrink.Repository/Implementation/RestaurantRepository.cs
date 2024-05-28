@@ -330,5 +330,24 @@ namespace FooDrink.Repository.Implementation
             return imageList;
         }
 
+        /// <summary>
+        /// get restaurant with manager id
+        /// </summary>
+        /// <param name="managerId"></param>
+        /// <returns></returns>
+        public async Task<Restaurant?> GetByJwt(Guid managerId)
+        {
+            var manager = await _context.Set<User>().Where(b => b.Id == managerId).FirstOrDefaultAsync();
+            if (manager == null)
+            {
+                Console.WriteLine($"Entity with manager ID {managerId} not found.");
+            }
+            else
+            {
+                var entity = await _context.Set<Restaurant>().Where(a => a.Id == manager.RestaurantId).FirstOrDefaultAsync();
+                return entity;
+            }
+            return null;
+        }
     }
 }
