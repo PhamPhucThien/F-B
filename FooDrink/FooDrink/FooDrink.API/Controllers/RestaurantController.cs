@@ -2,6 +2,8 @@
 using FooDrink.BussinessService.Interface;
 using FooDrink.DTO.Request.Restaurant;
 using FooDrink.DTO.Response.Restaurant;
+using FooDrink.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FooDrink.API.Controllers
@@ -160,6 +162,28 @@ namespace FooDrink.API.Controllers
             {
                 request.Id = Guid.Parse(id);
                 ApproveRestaurantPartnerResponse response = await _restaurantService.ApproveRestaurantPartnerAsync(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// get restaurant with jwt token
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-restaurant-by-jwt")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> GetByJwt()
+        {
+            try
+            {
+                Guid userId = Guid.Parse(HttpContext.GetName());
+
+                var response = await _restaurantService.GetByJwt(userId);
+
                 return Ok(response);
             }
             catch (Exception ex)

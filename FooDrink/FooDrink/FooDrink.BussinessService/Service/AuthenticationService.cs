@@ -30,7 +30,7 @@ namespace FooDrink.BussinessService.Service
 
             if (user != null)
             {
-                response.Token = _jwtTokenGenerator.GenerateToken(user.Id, user.FullName);
+                response.Token = _jwtTokenGenerator.GenerateToken(user.Id, user.Role);
             }
             else
             {

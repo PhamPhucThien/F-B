@@ -314,5 +314,54 @@ namespace FooDrink.BussinessService.Service
                 throw new Exception("An error occurred while approving restaurant partner.", ex);
             }
         }
+
+        /// <summary>
+        /// get by jwt
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public async Task<RestaurantGetByIdResponse> GetByJwt(Guid id)
+        {
+            try
+            {
+                Restaurant? restaurant = await _restaurantRepository.GetByJwt(id);
+
+                if (restaurant == null)
+                {
+                    throw new ArgumentException("Restaurant not found");
+                }
+
+                List<string> imageList = await _restaurantRepository.GetRestaurantImageUrlsAsync(restaurant.Id);
+
+                RestaurantResponse restaurantResponse = new()
+                {
+                    Id = restaurant.Id,
+                    RestaurantName = restaurant.RestaurantName,
+                    Latitude = restaurant.Latitude,
+                    Longitude = restaurant.Longitude,
+                    Address = restaurant.Address,
+                    City = restaurant.City,
+                    Country = restaurant.Country,
+                    Hotline = restaurant.Hotline,
+                    AverageRating = restaurant.AverageRating,
+                    ImageList = imageList,
+                    TotalRevenue = restaurant.TotalRevenue,
+                    DailyRevenue = restaurant.DailyRevenue,
+                    MonthlyRevenue = restaurant.MonthlyRevenue,
+                    IsRegistration = restaurant.IsRegistration,
+                    Status = restaurant.Status
+                };
+
+                return new RestaurantGetByIdResponse
+                {
+                    Data = restaurantResponse
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching the restaurant by jwt.", ex);
+            }
+        }
     }
 }

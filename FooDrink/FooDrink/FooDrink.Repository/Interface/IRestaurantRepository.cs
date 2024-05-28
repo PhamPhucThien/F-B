@@ -10,6 +10,8 @@ namespace FooDrink.Repository.Interface
         Task<ApproveRestaurantPartnerResponse> ApproveRestaurantPartnerAsync(ApproveRestaurantPartnerRequest request);
         Task<RestaurantGetByLocationResponse> GetRestaurantsByLocationAsync(RestaurantGetByLocationRequest request);
         Task<List<string>> GetRestaurantImageUrlsAsync(Guid restaurantId);
+        Task<Restaurant?> GetByJwt(Guid managerId);
+
     }
 }
 
