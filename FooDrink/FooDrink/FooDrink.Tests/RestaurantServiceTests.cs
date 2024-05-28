@@ -312,5 +312,54 @@ namespace FooDrink.Tests
             Assert.Equal("Approval successful", result.Message);
         }
 
+        [Fact]
+        public async Task GetByJwt_ShouldReturnRestaurantGetByIdResponse_WhenRestaurantExists()
+        {
+            // Arrange
+            Guid restaurantId = Guid.NewGuid();
+            Restaurant restaurant = new()
+            {
+                Id = restaurantId,
+                RestaurantName = "Test Restaurant",
+                Latitude = "123.456",
+                Longitude = "789.012",
+                Address = "123 Main Street",
+                City = "Test City",
+                Country = "Test Country",
+                Hotline = "123-456-789",
+                AverageRating = 4.5f,
+                TotalRevenue = "10000",
+                DailyRevenue = "500",
+                MonthlyRevenue = "15000",
+                IsRegistration = true,
+                Status = true
+            };
+            List<string> imageList = new() { "image1.jpg", "image2.jpg" };
+
+            _ = _restaurantRepositoryMock.Setup(repo => repo.GetByJwt(restaurantId)).ReturnsAsync(restaurant);
+            _ = _restaurantRepositoryMock.Setup(repo => repo.GetRestaurantImageUrlsAsync(restaurantId)).ReturnsAsync(imageList);
+
+            // Act
+            RestaurantGetByIdResponse result = await _restaurantService.GetByJwt(restaurantId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Data);
+            Assert.Equal(restaurantId, result.Data.Id);
+            Assert.Equal(restaurant.RestaurantName, result.Data.RestaurantName);
+            Assert.Equal(restaurant.Latitude, result.Data.Latitude);
+            Assert.Equal(restaurant.Longitude, result.Data.Longitude);
+            Assert.Equal(restaurant.Address, result.Data.Address);
+            Assert.Equal(restaurant.City, result.Data.City);
+            Assert.Equal(restaurant.Country, result.Data.Country);
+            Assert.Equal(restaurant.Hotline, result.Data.Hotline);
+            Assert.Equal(restaurant.AverageRating, result.Data.AverageRating);
+            Assert.Equal(imageList, result.Data.ImageList);
+            Assert.Equal(restaurant.TotalRevenue, result.Data.TotalRevenue);
+            Assert.Equal(restaurant.DailyRevenue, result.Data.DailyRevenue);
+            Assert.Equal(restaurant.MonthlyRevenue, result.Data.MonthlyRevenue);
+            Assert.Equal(restaurant.IsRegistration, result.Data.IsRegistration);
+            Assert.Equal(restaurant.Status, result.Data.Status);
+        }
     }
 }
